@@ -1,0 +1,86 @@
+﻿@page "/car/{carID:int}"
+
+<div class="container text-center" tabindex="0" @ref="arrowContainer" @onkeydown="HandleKeyDown" @onkeyup="HandleKeyUp">
+    <h3 class="text-primary">Car @carID</h3>
+    <p>Use W, A, S, D or click and hold to control the arrows</p>
+
+    <!-- Arrow keys displayed as divs with dynamic background colors -->
+    <div class="d-flex justify-content-center">
+        <div class="arrow"
+             style="background-color:@upArrowColor;"
+             @onmousedown="@(() => HandleDirectionDown("w"))"
+             @onmouseup="@(() => HandleDirectionUp("w"))"
+             @ontouchstart="@(() => HandleDirectionDown("w"))"
+             @ontouchend="@(() => HandleDirectionUp("w"))">
+            <img src="/images/arrow.png" class="arrow-img up-img" />
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="arrow"
+             style="background-color:@leftArrowColor;"
+             @onmousedown="@(() => HandleDirectionDown("a"))"
+             @onmouseup="@(() => HandleDirectionUp("a"))"
+             @ontouchstart="@(() => HandleDirectionDown("a"))"
+             @ontouchend="@(() => HandleDirectionUp("a"))">
+            <img src="/images/arrow.png" class="arrow-img left-img" />
+        </div>
+        <div class="arrow" />
+        <div class="arrow"
+             style="background-color:@rightArrowColor;"
+             @onmousedown="@(() => HandleDirectionDown("d"))"
+             @onmouseup="@(() => HandleDirectionUp("d"))"
+             @ontouchstart="@(() => HandleDirectionDown("d"))"
+             @ontouchend="@(() => HandleDirectionUp("d"))">
+            <img src="/images/arrow.png" class="arrow-img right-img" />
+        </div>
+    </div>
+    <div class="d-flex justify-content-center">
+        <div class="arrow"
+             style="background-color:@downArrowColor;"
+             @onmousedown="@(() => HandleDirectionDown("s"))"
+             @onmouseup="@(() => HandleDirectionUp("s"))"
+             @ontouchstart="@(() => HandleDirectionDown("s"))"
+             @ontouchend="@(() => HandleDirectionUp("s"))">
+            <img src="/images/arrow.png" class="arrow-img down-img" />
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Styling for arrows */
+    .arrow {
+        width: 15vh;
+        height: 15vh;
+        margin: 1vh;
+        border-radius: 10px;
+        background-color: black;
+        cursor: pointer;
+        position: relative; /* Ensure absolute positioning of the image works correctly */
+    }
+
+    .arrow-img {
+        width: 60%; /* Adjust size as needed */
+        height: 60%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Rotations for the image itself, not the arrow div */
+    .up-img {
+        transform: translate(-50%, -50%) rotate(90deg); /* Rotate 270deg for up */
+    }
+
+    .left-img {
+        transform: translate(-50%, -50%) rotate(0deg); /* Rotate 180deg for left */
+    }
+
+    .down-img {
+        transform: translate(-50%, -50%) rotate(270deg); /* Rotate 90deg for down */
+    }
+
+    .right-img {
+        transform: translate(-50%, -50%) rotate(180deg);
+    }
+</style>

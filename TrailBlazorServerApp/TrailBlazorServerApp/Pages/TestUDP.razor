@@ -1,0 +1,67 @@
+﻿@page "/test"
+@inject UdpCommunicationService UdpService
+@implements IDisposable
+
+<h3>Send Command to ESP32C3 Devices</h3>
+
+<div>
+    <input @bind="messageToSend" placeholder="Enter message" />
+    <button @onclick="SendMessage">Send to ESP Devices</button>
+</div>
+
+<p>@statusMessage</p>
+
+<h4>Responses from ESP Devices</h4>
+<ul>
+    @foreach (var response in receivedMessages)
+    {
+        <li>@response</li>
+    }
+</ul>
+
+@code {
+    private string messageToSend = "";
+    private string statusMessage = "";
+    private List<string> receivedMessages = new(); // Store received messages
+
+    protected override Task OnInitializedAsync()
+    {
+        // Start listening for responses when this page/component is loaded
+        var cts = new CancellationTokenSource();
+        Task.Run(() => UdpService.StartListeningForResponses(cts.Token));
+        //TODO - cancel once page is left ... this page is for testing only either way
+        return base.OnInitializedAsync();
+    }
+
+    protected override void OnInitialized()
+    {
+        // Subscribe to the OnMessageReceived event
+        UdpService.OnMessageReceived += HandleMessageReceived;
+    }
+
+    private async Task SendMessage()
+    {
+        if (!string.IsNullOrEmpty(messageToSend))
+        {
+            await UdpService.SendMessageToEspDevices(messageToSend);
+            statusMessage = $"Sent: {messageToSend}";
+        }
+        else
+        {
+            statusMessage = "Please enter a message.";
+        }
+    }
+
+    // This method will be called when a new message is received
+    private void HandleMessageReceived(string message)
+    {
+        receivedMessages.Add(message);
+        InvokeAsync(StateHasChanged); // Update the UI
+    }
+
+    // Unsubscribe from the event when the component is disposed
+    public void Dispose()
+    {
+        UdpService.OnMessageReceived -= HandleMessageReceived;
+    }
+}

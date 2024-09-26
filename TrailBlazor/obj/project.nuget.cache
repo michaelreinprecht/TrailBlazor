@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "oDjSd1xspIS8EMcArYuExyzNr3E8QS/fGQFYgF50fYMoMKQTW4RtzP8gE779iq87hpRvdtjeNv6fpgh0TQc6Nw==",
+  "dgSpecHash": "2jliptB7roOUMivBI5g42suWWpTVWiMdIKQecnqZgPtfL+Mi3Sil0QQviu88DAv53t/xQiFjZIfJdSiLfsHqOw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazor.csproj",
   "expectedPackageFiles": [
@@ -29,10 +29,11 @@
     "C:\\Users\\Zechs\\.nuget\\packages\\microsoft.jsinterop\\8.0.0\\microsoft.jsinterop.8.0.0.nupkg.sha512",
     "C:\\Users\\Zechs\\.nuget\\packages\\microsoft.jsinterop.webassembly\\8.0.0\\microsoft.jsinterop.webassembly.8.0.0.nupkg.sha512",
     "C:\\Users\\Zechs\\.nuget\\packages\\microsoft.net.illink.tasks\\8.0.0\\microsoft.net.illink.tasks.8.0.0.nupkg.sha512",
-    "C:\\Users\\Zechs\\.nuget\\packages\\microsoft.net.sdk.webassembly.pack\\8.0.0\\microsoft.net.sdk.webassembly.pack.8.0.0.nupkg.sha512",
+    "C:\\Users\\Zechs\\.nuget\\packages\\microsoft.net.sdk.webassembly.pack\\8.0.8\\microsoft.net.sdk.webassembly.pack.8.0.8.nupkg.sha512",
     "C:\\Users\\Zechs\\.nuget\\packages\\system.io.pipelines\\8.0.0\\system.io.pipelines.8.0.0.nupkg.sha512",
     "C:\\Users\\Zechs\\.nuget\\packages\\system.text.encodings.web\\8.0.0\\system.text.encodings.web.8.0.0.nupkg.sha512",
-    "C:\\Users\\Zechs\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512"
+    "C:\\Users\\Zechs\\.nuget\\packages\\system.text.json\\8.0.0\\system.text.json.8.0.0.nupkg.sha512",
+    "C:\\Users\\Zechs\\.nuget\\packages\\microsoft.netcore.app.runtime.mono.browser-wasm\\8.0.8\\microsoft.netcore.app.runtime.mono.browser-wasm.8.0.8.nupkg.sha512"
   ],
   "logs": []
 }

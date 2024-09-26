@@ -428,7 +428,7 @@
           "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
       },
-      "Microsoft.NET.Sdk.WebAssembly.Pack/8.0.0": {
+      "Microsoft.NET.Sdk.WebAssembly.Pack/8.0.8": {
         "type": "package",
         "build": {
           "build/Microsoft.NET.Sdk.WebAssembly.Pack.props": {},
@@ -920,7 +920,7 @@
           "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
       },
-      "Microsoft.NET.Sdk.WebAssembly.Pack/8.0.0": {
+      "Microsoft.NET.Sdk.WebAssembly.Pack/8.0.8": {
         "type": "package",
         "build": {
           "build/Microsoft.NET.Sdk.WebAssembly.Pack.props": {},
@@ -1842,10 +1842,10 @@
         "useSharedDesignerContext.txt"
       ]
     },
-    "Microsoft.NET.Sdk.WebAssembly.Pack/8.0.0": {
-      "sha512": "zIP/2rXQN1Q7xkqxJmDU31BvoISdhM6tH0o206ShlTCWgcmMKuGapPYIDcDcUmIZjZGHrLKM4z/MsgfLGi0VUw==",
+    "Microsoft.NET.Sdk.WebAssembly.Pack/8.0.8": {
+      "sha512": "z2UxqxjssvxlcQ68KZorgQDITdV2u5H6CWOGhs3kiv+qqDtokhDpcK660TUMrX+FTDdRKie0l7EeZEdej26Ycw==",
       "type": "package",
-      "path": "microsoft.net.sdk.webassembly.pack/8.0.0",
+      "path": "microsoft.net.sdk.webassembly.pack/8.0.8",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
@@ -1873,7 +1873,7 @@
         "build/Microsoft.NET.Sdk.WebAssembly.Pack.props",
         "build/Microsoft.NET.Sdk.WebAssembly.Pack.targets",
         "build/Wasm.web.config",
-        "microsoft.net.sdk.webassembly.pack.8.0.0.nupkg.sha512",
+        "microsoft.net.sdk.webassembly.pack.8.0.8.nupkg.sha512",
         "microsoft.net.sdk.webassembly.pack.nuspec",
         "tools/net472/Microsoft.Bcl.AsyncInterfaces.dll",
         "tools/net472/Microsoft.Build.dll",
@@ -1881,6 +1881,7 @@
         "tools/net472/Microsoft.NET.Sdk.WebAssembly.Pack.Tasks.dll",
         "tools/net472/Microsoft.NET.StringTools.dll",
         "tools/net472/Microsoft.NET.WebAssembly.Webcil.dll",
+        "tools/net472/Microsoft.VisualStudio.Setup.Configuration.Interop.dll",
         "tools/net472/System.Buffers.dll",
         "tools/net472/System.Collections.Immutable.dll",
         "tools/net472/System.Configuration.ConfigurationManager.dll",
@@ -1903,6 +1904,7 @@
         "tools/net8.0/Microsoft.NET.WebAssembly.Webcil.dll",
         "tools/net8.0/Microsoft.Win32.SystemEvents.dll",
         "tools/net8.0/System.Configuration.ConfigurationManager.dll",
+        "tools/net8.0/System.Diagnostics.EventLog.dll",
         "tools/net8.0/System.Drawing.Common.dll",
         "tools/net8.0/System.Reflection.MetadataLoadContext.dll",
         "tools/net8.0/System.Security.Cryptography.ProtectedData.dll",
@@ -2053,7 +2055,7 @@
       "Microsoft.AspNetCore.Components.WebAssembly >= 8.0.0",
       "Microsoft.AspNetCore.Components.WebAssembly.DevServer >= 8.0.0",
       "Microsoft.NET.ILLink.Tasks >= 8.0.0",
-      "Microsoft.NET.Sdk.WebAssembly.Pack >= 8.0.0"
+      "Microsoft.NET.Sdk.WebAssembly.Pack >= 8.0.8"
     ]
   },
   "packageFolders": {
@@ -2119,7 +2121,7 @@
           "Microsoft.NET.Sdk.WebAssembly.Pack": {
             "suppressParent": "All",
             "target": "Package",
-            "version": "[8.0.0, )",
+            "version": "[8.0.8, )",
             "autoReferenced": true
           }
         },
@@ -2134,6 +2136,12 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.NETCore.App.Runtime.Mono.browser-wasm",
+            "version": "[8.0.8, 8.0.8]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
