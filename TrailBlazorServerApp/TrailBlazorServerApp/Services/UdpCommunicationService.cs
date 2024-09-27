@@ -6,11 +6,11 @@ public class UdpCommunicationService
 {
     private readonly List<IPEndPoint> _esp32Devices = new()
     {
-        new IPEndPoint(IPAddress.Parse("192.168.4.101"), 4210), // ESP32C3 #1
-        //new IPEndPoint(IPAddress.Parse("192.168.4.102"), 4210), // ESP32C3 #2
+        new IPEndPoint(IPAddress.Parse("192.168.4.9"), 4444), // ESP32C3 #1
+        //new IPEndPoint(IPAddress.Parse("192.168.4.10"), 4444), // ESP32C3 #2
     };
 
-    private const int ListeningPort = 4211; // Port to listen for ESP responses
+    private const int ListeningPort = 3333; // Port to listen for ESP responses
     public event Action<string>? OnMessageReceived; // Event to notify when a message is received
 
     // Sending messages to multiple ESP devices
