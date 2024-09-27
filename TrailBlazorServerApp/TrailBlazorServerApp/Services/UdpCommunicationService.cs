@@ -16,7 +16,7 @@ public class UdpCommunicationService
     // Sending messages to multiple ESP devices
     public async Task SendMessageToEspDevices(string message)
     {
-        using (var udpClient = new UdpClient())
+        using (var udpClient = new UdpClient(ListeningPort))
         {
             var messageBytes = Encoding.UTF8.GetBytes(message);
 
