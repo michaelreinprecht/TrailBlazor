@@ -11,41 +11,43 @@ public class UdpCommunicationService
     };
 
     private const int ListeningPort = 3333; // Port to listen for ESP responses
+    private readonly UdpClient _udpClient; // Reusable UdpClient for both sending and receiving
+
     public event Action<string>? OnMessageReceived; // Event to notify when a message is received
+
+    public UdpCommunicationService()
+    {
+        // Bind the UdpClient to the listening port once
+        _udpClient = new UdpClient(ListeningPort);
+    }
 
     // Sending messages to multiple ESP devices
     public async Task SendMessageToEspDevices(string message)
     {
-        using (var udpClient = new UdpClient(ListeningPort))
-        {
-            var messageBytes = Encoding.UTF8.GetBytes(message);
+        var messageBytes = Encoding.UTF8.GetBytes(message);
 
-            foreach (var deviceEndpoint in _esp32Devices)
-            {
-                await udpClient.SendAsync(messageBytes, messageBytes.Length, deviceEndpoint);
-                Console.WriteLine($"Message sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
-            }
+        foreach (var deviceEndpoint in _esp32Devices)
+        {
+            await _udpClient.SendAsync(messageBytes, messageBytes.Length, deviceEndpoint);
+            Console.WriteLine($"Message sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
         }
     }
 
     // Start listening for responses (this runs in the background)
     public async Task StartListeningForResponses(CancellationToken cancellationToken)
     {
-        using (var udpListener = new UdpClient(ListeningPort))
+        Console.WriteLine($"Listening for responses on port {ListeningPort}...");
+
+        while (!cancellationToken.IsCancellationRequested)
         {
-            Console.WriteLine($"Listening for responses on port {ListeningPort}...");
+            var result = await _udpClient.ReceiveAsync();
+            var receivedMessage = Encoding.UTF8.GetString(result.Buffer);
+            var sender = result.RemoteEndPoint;
 
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                var result = await udpListener.ReceiveAsync();
-                var receivedMessage = Encoding.UTF8.GetString(result.Buffer);
-                var sender = result.RemoteEndPoint;
+            Console.WriteLine($"Received message from {sender}: {receivedMessage}");
 
-                Console.WriteLine($"Received message from {sender}: {receivedMessage}");
-
-                // Raise event to notify the UI
-                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - {receivedMessage}");
-            }
+            // Raise event to notify the UI
+            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - {receivedMessage}");
         }
     }
 }
