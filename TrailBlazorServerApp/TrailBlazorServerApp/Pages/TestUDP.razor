@@ -2,12 +2,18 @@
 @inject UdpCommunicationService UdpService
 @implements IDisposable
 
+@using TrailBlazorServerApp.Data
 <h3>Send Command to ESP32C3 Devices</h3>
 
 <div>
-    <input @bind="messageToSend" placeholder="Enter message" />
-    <button @onclick="SendMessage">Send to ESP Devices</button>
+    <label>Direction (L, R, F, B):</label>
+    <input @bind="command.Direction" />
 </div>
+<div>
+    <label>Stop (0 or 1):</label>
+    <input type="number" @bind="command.Stop" />
+</div>
+<button @onclick="SendCommand">Send to ESP Devices</button>
 
 <p>@statusMessage</p>
 
@@ -20,39 +26,16 @@
 </ul>
 
 @code {
-    private string messageToSend = "";
+    private Command command = new Command();
     private string statusMessage = "";
     private List<string> receivedMessages = new(); // Store received messages
 
-    protected override Task OnInitializedAsync()
+    private async Task SendCommand()
     {
-        // Start listening for responses when this page/component is loaded
-        var cts = new CancellationTokenSource();
-        Task.Run(() => UdpService.StartListeningForResponses(cts.Token));
-        //TODO - cancel once page is left ... this page is for testing only either way
-        return base.OnInitializedAsync();
+        await UdpService.SendCommandToEspDevices(command);
+        statusMessage = $"Sent: Direction = {command.Direction}, Stop = {command.Stop}";
     }
 
-    protected override void OnInitialized()
-    {
-        // Subscribe to the OnMessageReceived event
-        UdpService.OnMessageReceived += HandleMessageReceived;
-    }
-
-    private async Task SendMessage()
-    {
-        if (!string.IsNullOrEmpty(messageToSend))
-        {
-            await UdpService.SendMessageToEspDevices(messageToSend);
-            statusMessage = $"Sent: {messageToSend}";
-        }
-        else
-        {
-            statusMessage = "Please enter a message.";
-        }
-    }
-
-    // This method will be called when a new message is received
     private void HandleMessageReceived(string message)
     {
         receivedMessages.Add(message);

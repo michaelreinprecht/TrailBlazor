@@ -1,11 +1,3 @@
-/* BSD Socket API Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
 #include <string.h>
 #include <sys/param.h>
 #include "freertos/FreeRTOS.h"
@@ -26,34 +18,96 @@
 #define PORT 4444
 
 static const char *TAG = "udp_server";
+static EventGroupHandle_t wifi_event_group;
+
+// typedef struct {
+//     char direction;  // Direction character ('L', 'R', 'F', 'B', etc.)
+//     int stop;        // Stop flag (0 or 1)
+// } command_t;
+
+static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data)
+{
+    int wifi_connected_bit = BIT0;
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
+    {
+        // If Wi-Fi station mode has started, try to connect.
+        esp_wifi_connect();
+    }
+    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
+    {
+        // If Wi-Fi station mode has disconnected, try to reconnect.
+        ESP_LOGI(TAG, "Disconnected from Wi-Fi, retrying...");
+        esp_wifi_connect();
+        xEventGroupClearBits(wifi_event_group, wifi_connected_bit);
+    }
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
+    {
+        // ESP has received IP-Address from the router, set connected bit.
+        ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
+        ESP_LOGI(TAG, "Got IP: %s",
+                 ip4addr_ntoa(&event->ip_info.ip));
+        xEventGroupSetBits(wifi_event_group, wifi_connected_bit);
+    }
+}
+
+void wifi_init_static_ip(void)
+{
+    // Create Wi-Fi interface in station mode.
+    esp_netif_t *netif = esp_netif_create_default_wifi_sta();
+    assert(netif);
+
+    esp_netif_ip_info_t ip_info;
+
+    // Set IP configuration for ESP
+    IP4_ADDR(&ip_info.ip, 192, 168, 4, 9);        // ESP Address
+    IP4_ADDR(&ip_info.gw, 192, 168, 4, 1);        // Gateway (Raspi) address
+    IP4_ADDR(&ip_info.netmask, 255, 255, 255, 0); // Netmask
+
+    esp_netif_dhcpc_stop(netif);            // Stop DHCP client
+    esp_netif_set_ip_info(netif, &ip_info); // Assign static IP info
+
+    // Initialize the Wi-Fi with default config
+    wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
+    ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+    // Configure Wi-Fi connection (using WPA2 for authentication)
+    wifi_config_t wifi_config = {
+        .sta = {
+            .ssid = "TrailBlazorRaspi",
+            .password = "admin1234!",
+            .threshold.authmode = WIFI_AUTH_WPA2_PSK,
+        },
+    };
+
+    // Sets Wi-Fi mode to station and applies Wi-Fi configuration.
+    ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+    ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+
+    // Register the event handler to handle Wifi and Ip events
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &wifi_event_handler, NULL, NULL));
+
+    ESP_ERROR_CHECK(esp_wifi_start());
+
+    ESP_LOGI(TAG, "wifi_init_static_ip finished.");
+}
 
 static void udp_server_task(void *pvParameters)
 {
-    char rx_buffer[128];
-    char addr_str[128];
-    int addr_family = (int)pvParameters;
-    int ip_protocol = 0;
-    struct sockaddr_in6 dest_addr;
+    char rx_buffer[128];          // Buffer for incoming packets
+    char addr_str[128];           // Buffer for client IP address
+    int addr_family = AF_INET;    // IPv4
+    int ip_protocol = IPPROTO_IP; // using IP protocol
+    struct sockaddr_in dest_addr; // struct to hold destination address for incoming packets
 
     while (1)
     {
+        // Prepare to receive packets from any IP address via port 4444 (should change to Raspi Address eventually)
+        dest_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+        dest_addr.sin_family = AF_INET;
+        dest_addr.sin_port = htons(PORT);
 
-        if (addr_family == AF_INET)
-        {
-            struct sockaddr_in *dest_addr_ip4 = (struct sockaddr_in *)&dest_addr;
-            dest_addr_ip4->sin_addr.s_addr = htonl(INADDR_ANY);
-            dest_addr_ip4->sin_family = AF_INET;
-            dest_addr_ip4->sin_port = htons(PORT);
-            ip_protocol = IPPROTO_IP;
-        }
-        else if (addr_family == AF_INET6)
-        {
-            bzero(&dest_addr.sin6_addr.un, sizeof(dest_addr.sin6_addr.un));
-            dest_addr.sin6_family = AF_INET6;
-            dest_addr.sin6_port = htons(PORT);
-            ip_protocol = IPPROTO_IPV6;
-        }
-
+        // Attempt to create socket and handle errors in socket creation
         int sock = socket(addr_family, SOCK_DGRAM, ip_protocol);
         if (sock < 0)
         {
@@ -62,27 +116,13 @@ static void udp_server_task(void *pvParameters)
         }
         ESP_LOGI(TAG, "Socket created");
 
-#if defined(CONFIG_LWIP_NETBUF_RECVINFO) && !defined(CONFIG_EXAMPLE_IPV6)
-        int enable = 1;
-        lwip_setsockopt(sock, IPPROTO_IP, IP_PKTINFO, &enable, sizeof(enable));
-#endif
-
-#if defined(CONFIG_EXAMPLE_IPV4) && defined(CONFIG_EXAMPLE_IPV6)
-        if (addr_family == AF_INET6)
-        {
-            // Note that by default IPV6 binds to both protocols, it is must be disabled
-            // if both protocols used at the same time (used in CI)
-            int opt = 1;
-            setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
-            setsockopt(sock, IPPROTO_IPV6, IPV6_V6ONLY, &opt, sizeof(opt));
-        }
-#endif
-        // Set timeout
+        // Set a timeout of 10 seconds for receiving data (socket will restart if no data is received within timeout)
         struct timeval timeout;
         timeout.tv_sec = 10;
         timeout.tv_usec = 0;
         setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, &timeout, sizeof timeout);
 
+        // Bind the socket to the destination address and specified port
         int err = bind(sock, (struct sockaddr *)&dest_addr, sizeof(dest_addr));
         if (err < 0)
         {
@@ -90,63 +130,25 @@ static void udp_server_task(void *pvParameters)
         }
         ESP_LOGI(TAG, "Socket bound, port %d", PORT);
 
-        struct sockaddr_storage source_addr; // Large enough for both IPv4 or IPv6
+        // Enter loop waiting to receive UDP packets
+        struct sockaddr_storage source_addr; // stored the senders address
         socklen_t socklen = sizeof(source_addr);
-
-#if defined(CONFIG_LWIP_NETBUF_RECVINFO) && !defined(CONFIG_EXAMPLE_IPV6)
-        struct iovec iov;
-        struct msghdr msg;
-        struct cmsghdr *cmsgtmp;
-        u8_t cmsg_buf[CMSG_SPACE(sizeof(struct in_pktinfo))];
-
-        iov.iov_base = rx_buffer;
-        iov.iov_len = sizeof(rx_buffer);
-        msg.msg_control = cmsg_buf;
-        msg.msg_controllen = sizeof(cmsg_buf);
-        msg.msg_flags = 0;
-        msg.msg_iov = &iov;
-        msg.msg_iovlen = 1;
-        msg.msg_name = (struct sockaddr *)&source_addr;
-        msg.msg_namelen = socklen;
-#endif
 
         while (1)
         {
             ESP_LOGI(TAG, "Waiting for data");
-#if defined(CONFIG_LWIP_NETBUF_RECVINFO) && !defined(CONFIG_EXAMPLE_IPV6)
-            int len = recvmsg(sock, &msg, 0);
-#else
+            // Attempt to receive packets and handle errors in receiving
             int len = recvfrom(sock, rx_buffer, sizeof(rx_buffer) - 1, 0, (struct sockaddr *)&source_addr, &socklen);
-#endif
-            // Error occurred during receiving
             if (len < 0)
             {
+                // On failure to receive data, log error and break loop
                 ESP_LOGE(TAG, "recvfrom failed: errno %d", errno);
                 break;
             }
-            // Data received
             else
             {
-                // Get the sender's ip address as string
-                if (source_addr.ss_family == PF_INET)
-                {
-                    inet_ntoa_r(((struct sockaddr_in *)&source_addr)->sin_addr, addr_str, sizeof(addr_str) - 1);
-#if defined(CONFIG_LWIP_NETBUF_RECVINFO) && !defined(CONFIG_EXAMPLE_IPV6)
-                    for (cmsgtmp = CMSG_FIRSTHDR(&msg); cmsgtmp != NULL; cmsgtmp = CMSG_NXTHDR(&msg, cmsgtmp))
-                    {
-                        if (cmsgtmp->cmsg_level == IPPROTO_IP && cmsgtmp->cmsg_type == IP_PKTINFO)
-                        {
-                            struct in_pktinfo *pktinfo;
-                            pktinfo = (struct in_pktinfo *)CMSG_DATA(cmsgtmp);
-                            ESP_LOGI(TAG, "dest ip: %s", inet_ntoa(pktinfo->ipi_addr));
-                        }
-                    }
-#endif
-                }
-                else if (source_addr.ss_family == PF_INET6)
-                {
-                    inet6_ntoa_r(((struct sockaddr_in6 *)&source_addr)->sin6_addr, addr_str, sizeof(addr_str) - 1);
-                }
+                // On successful reception of data, log the data and echo it back to the sender
+                inet_ntoa_r(((struct sockaddr_in *)&source_addr)->sin_addr, addr_str, sizeof(addr_str) - 1);
 
                 rx_buffer[len] = 0; // Null-terminate whatever we received and treat like a string...
                 ESP_LOGI(TAG, "Received %d bytes from %s:", len, addr_str);
@@ -177,16 +179,8 @@ void app_main(void)
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
 
-    /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
-     * Read "Establishing Wi-Fi or Ethernet Connection" section in
-     * examples/protocols/README.md for more information about this function.
-     */
-    ESP_ERROR_CHECK(example_connect());
+    wifi_event_group = xEventGroupCreate();
+    wifi_init_static_ip();
 
-#ifdef CONFIG_EXAMPLE_IPV4
-    xTaskCreate(udp_server_task, "udp_server", 4096, (void *)AF_INET, 5, NULL);
-#endif
-#ifdef CONFIG_EXAMPLE_IPV6
-    xTaskCreate(udp_server_task, "udp_server", 4096, (void *)AF_INET6, 5, NULL);
-#endif
+    xTaskCreate(udp_server_task, "udp_server", 4096, NULL, 5, NULL);
 }
