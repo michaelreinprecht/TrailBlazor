@@ -13,6 +13,10 @@
     <label>Stop (0 or 1):</label>
     <input type="number" @bind="command.Stop" />
 </div>
+<div>
+    <label>StopBool:</label>
+    <input type="checkbox" @bind="command.StopBool" />
+</div>
 <button @onclick="SendCommand">Send to ESP Devices</button>
 
 <p>@statusMessage</p>
@@ -33,7 +37,7 @@
     private async Task SendCommand()
     {
         await UdpService.SendCommandToEspDevices(command);
-        statusMessage = $"Sent: Direction = {command.Direction}, Stop = {command.Stop}";
+        statusMessage = $"Sent: Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}";
     }
 
     private void HandleMessageReceived(string message)

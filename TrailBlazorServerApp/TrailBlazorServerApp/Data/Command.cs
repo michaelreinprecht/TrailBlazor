@@ -1,9 +1,13 @@
-﻿namespace TrailBlazorServerApp.Data
+﻿using System.Runtime.InteropServices;
+
+namespace TrailBlazorServerApp.Data
 {
-    public class Command
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]  // Ensure 1-byte alignment like in C
+    public struct Command
     {
-        public char Direction { get; set; }  // Direction character
-        public int Stop { get; set; }        // Stop flag (0 or 1)
+        public char Direction;  // Same as 'char' in C
+        public int Stop;        // Same as 'int' in C
+        public bool StopBool;   // Same as 'bool' in C
     }
 
 }

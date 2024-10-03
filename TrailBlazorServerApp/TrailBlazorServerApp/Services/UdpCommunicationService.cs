@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using TrailBlazorServerApp.Data;
 
@@ -35,6 +36,7 @@ public class UdpCommunicationService
     }
 
     // Start listening for responses (this runs in the background)
+    // Start listening for responses (this runs in the background)
     public async Task StartListeningForResponses(CancellationToken cancellationToken)
     {
         Console.WriteLine($"Listening for responses on port {ListeningPort}...");
@@ -44,31 +46,58 @@ public class UdpCommunicationService
             var result = await _udpClient.ReceiveAsync();
             var sender = result.RemoteEndPoint;
 
-            // Convert bytes to Command struct
-            var command = new Command
+            // Make sure we received the right amount of bytes
+            if (result.Buffer.Length == Marshal.SizeOf(typeof(Command)))
             {
-                Direction = (char)result.Buffer[0],      // First byte is the direction char
-                Stop = BitConverter.ToInt32(result.Buffer, 1) // Next 4 bytes are the stop int
-            };
+                Command command;
 
-            Console.WriteLine($"Received command from {sender}: Direction = {command.Direction}, Stop = {command.Stop}");
+                // Pin the incoming byte array in memory and convert it to the Command struct
+                IntPtr ptr = Marshal.AllocHGlobal(result.Buffer.Length);
+                try
+                {
+                    Marshal.Copy(result.Buffer, 0, ptr, result.Buffer.Length);
+                    command = Marshal.PtrToStructure<Command>(ptr);
+                }
+                finally
+                {
+                    Marshal.FreeHGlobal(ptr);
+                }
 
-            // Raise event to notify the UI
-            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {command.Direction}, Stop = {command.Stop}");
+                Console.WriteLine($"Received command from {sender}: Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}");
+
+                // Raise event to notify the UI
+                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}");
+            }
+            else
+            {
+                Console.WriteLine($"Received {result.Buffer.Length} bytes from {sender}, expected {Marshal.SizeOf(typeof(Command))} bytes.");
+            }
         }
     }
+
 
 
     //Sending commands (struct) to esp devices
     public async Task SendCommandToEspDevices(Command command)
     {
-        var commandBytes = new byte[5]; // 1 byte for char + 4 bytes for int
+        //Test if struct size matches, remove later
+        Console.WriteLine($"Size of Command: {Marshal.SizeOf(typeof(Command))}");  // Log size of struct
 
-        // Convert 'direction' (char) to byte
-        commandBytes[0] = (byte)command.Direction;
+        // Calculate the size of the struct
+        int size = Marshal.SizeOf(command);
+        byte[] commandBytes = new byte[size];
 
-        // Convert 'stop' (int) to bytes
-        BitConverter.GetBytes(command.Stop).CopyTo(commandBytes, 1);
+        // Pin the command struct in memory and copy it to byte array
+        IntPtr ptr = Marshal.AllocHGlobal(size);
+        try
+        {
+            Marshal.StructureToPtr(command, ptr, true);
+            Marshal.Copy(ptr, commandBytes, 0, size);
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(ptr);
+        }
 
         foreach (var deviceEndpoint in _esp32Devices)
         {
@@ -76,5 +105,6 @@ public class UdpCommunicationService
             Console.WriteLine($"Command sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
         }
     }
+
 
 }
