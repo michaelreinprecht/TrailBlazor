@@ -36,7 +36,6 @@ public class UdpCommunicationService
     }
 
     // Start listening for responses (this runs in the background)
-    // Start listening for responses (this runs in the background)
     public async Task StartListeningForResponses(CancellationToken cancellationToken)
     {
         Console.WriteLine($"Listening for responses on port {ListeningPort}...");

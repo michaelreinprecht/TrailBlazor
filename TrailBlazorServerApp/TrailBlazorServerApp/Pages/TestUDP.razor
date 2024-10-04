@@ -1,21 +1,21 @@
 ﻿@page "/test"
 @inject UdpCommunicationService UdpService
 @implements IDisposable
-
 @using TrailBlazorServerApp.Data
+
 <h3>Send Command to ESP32C3 Devices</h3>
 
 <div>
     <label>Direction (L, R, F, B):</label>
-    <input @bind="command.Direction" />
+    <input @bind="directionInput" maxlength="1" />
 </div>
 <div>
     <label>Stop (0 or 1):</label>
-    <input type="number" @bind="command.Stop" />
+    <input type="number" @bind="command.Stop" min="0" max="1" />
 </div>
 <div>
     <label>StopBool:</label>
-    <input type="checkbox" @bind="command.StopBool" />
+    <input type="checkbox" @bind="isStopBoolChecked" />
 </div>
 <button @onclick="SendCommand">Send to ESP Devices</button>
 
@@ -34,10 +34,28 @@
     private string statusMessage = "";
     private List<string> receivedMessages = new(); // Store received messages
 
+    // Temp variables for input handling
+    private string directionInput = "";
+    private bool isStopBoolChecked;
+
     private async Task SendCommand()
     {
+        // Convert the single character to byte (ASCII)
+        if (!string.IsNullOrEmpty(directionInput) && directionInput.Length == 1)
+        {
+            command.Direction = (byte)directionInput[0];  // ASCII value of the character
+        }
+        else
+        {
+            statusMessage = "Please enter a valid direction (L, R, F, B).";
+            return;
+        }
+
+        // Convert the checkbox value to 0 or 1
+        command.StopBool = (byte)(isStopBoolChecked ? 1 : 0);
+
         await UdpService.SendCommandToEspDevices(command);
-        statusMessage = $"Sent: Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}";
+        statusMessage = $"Sent: Direction = {directionInput}, Stop = {command.Stop}, StopBool = {(isStopBoolChecked ? "True" : "False")}";
     }
 
     private void HandleMessageReceived(string message)
