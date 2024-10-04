@@ -32,3 +32,6 @@ C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazorServerApp\Tr
 C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\ref\TrailBlazorServerApp.dll
 C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\scopedcss\Pages\CarPage.razor.rz.scp.css
 C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\scopedcss\Pages\MainPage.razor.rz.scp.css
+C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazorServerApp\TrailBlazorServerApp\bin\Debug\net8.0\Google.Protobuf.dll
+C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\TrailBlazorServerApp.csproj.AssemblyReference.cache
+C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\TrailBlazorServerApp.csproj.CopyComplete

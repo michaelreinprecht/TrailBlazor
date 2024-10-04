@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Data;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -23,17 +24,77 @@ public class UdpCommunicationService
         _udpClient = new UdpClient(ListeningPort);
     }
 
-    // Sending messages (ASCII) to multiple ESP devices
-    public async Task SendMessageToEspDevices(string message)
-    {
-        var messageBytes = Encoding.UTF8.GetBytes(message);
+    /* one struct logic */
+    //// Start listening for responses (this runs in the background)
+    //public async Task StartListeningForResponses(CancellationToken cancellationToken)
+    //{
+    //    Console.WriteLine($"Listening for responses on port {ListeningPort}...");
 
-        foreach (var deviceEndpoint in _esp32Devices)
-        {
-            await _udpClient.SendAsync(messageBytes, messageBytes.Length, deviceEndpoint);
-            Console.WriteLine($"Message sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
-        }
-    }
+    //    while (!cancellationToken.IsCancellationRequested)
+    //    {
+    //        var result = await _udpClient.ReceiveAsync();
+    //        var sender = result.RemoteEndPoint;
+
+    //        // Make sure we received the right amount of bytes
+    //        if (result.Buffer.Length == Marshal.SizeOf(typeof(Command)))
+    //        {
+    //            Command command;
+
+    //            // Pin the incoming byte array in memory and convert it to the Command struct
+    //            IntPtr ptr = Marshal.AllocHGlobal(result.Buffer.Length);
+    //            try
+    //            {
+    //                Marshal.Copy(result.Buffer, 0, ptr, result.Buffer.Length);
+    //                command = Marshal.PtrToStructure<Command>(ptr);
+    //            }
+    //            finally
+    //            {
+    //                Marshal.FreeHGlobal(ptr);
+    //            }
+
+    //            Console.WriteLine($"Received command from {sender}: Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}");
+
+    //            // Raise event to notify the UI
+    //            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}");
+    //        }
+    //        else
+    //        {
+    //            Console.WriteLine($"Received {result.Buffer.Length} bytes from {sender}, expected {Marshal.SizeOf(typeof(Command))} bytes.");
+    //        }
+    //    }
+    //}
+
+
+
+    ////Sending commands (struct) to esp devices
+    //public async Task SendCommandToEspDevices(Command command)
+    //{
+    //    //Test if struct size matches, remove later
+    //    Console.WriteLine($"Size of Command: {Marshal.SizeOf(typeof(Command))}");  // Log size of struct
+
+    //    // Calculate the size of the struct
+    //    int size = Marshal.SizeOf(command);
+    //    byte[] commandBytes = new byte[size];
+
+    //    // Pin the command struct in memory and copy it to byte array
+    //    IntPtr ptr = Marshal.AllocHGlobal(size);
+    //    try
+    //    {
+    //        Marshal.StructureToPtr(command, ptr, true);
+    //        Marshal.Copy(ptr, commandBytes, 0, size);
+    //    }
+    //    finally
+    //    {
+    //        Marshal.FreeHGlobal(ptr);
+    //    }
+
+    //    foreach (var deviceEndpoint in _esp32Devices)
+    //    {
+    //        await _udpClient.SendAsync(commandBytes, commandBytes.Length, deviceEndpoint);
+    //        Console.WriteLine($"Command sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
+    //    }
+    //}
+    /* one struct logic */
 
     // Start listening for responses (this runs in the background)
     public async Task StartListeningForResponses(CancellationToken cancellationToken)
@@ -45,65 +106,106 @@ public class UdpCommunicationService
             var result = await _udpClient.ReceiveAsync();
             var sender = result.RemoteEndPoint;
 
-            // Make sure we received the right amount of bytes
-            if (result.Buffer.Length == Marshal.SizeOf(typeof(Command)))
+            // Check if we received at least 1 byte for the struct type
+            if (result.Buffer.Length >= 1)
             {
-                Command command;
+                // First byte is the enum for the struct type
+                StructType structType = (StructType)result.Buffer[0];
 
-                // Pin the incoming byte array in memory and convert it to the Command struct
-                IntPtr ptr = Marshal.AllocHGlobal(result.Buffer.Length);
-                try
+                // Handle different struct types based on the command type
+                switch (structType)
                 {
-                    Marshal.Copy(result.Buffer, 0, ptr, result.Buffer.Length);
-                    command = Marshal.PtrToStructure<Command>(ptr);
-                }
-                finally
-                {
-                    Marshal.FreeHGlobal(ptr);
-                }
+                    case StructType.Command:
+                        if (result.Buffer.Length == 1 + Marshal.SizeOf(typeof(Command))) // 1 byte for type + struct size
+                        {
+                            Command command = DeserializeStruct<Command>(result.Buffer, 1);
+                            Console.WriteLine($"Received Command from {sender}: Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}");
 
-                Console.WriteLine($"Received command from {sender}: Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}");
+                            // Notify UI
+                            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Invalid size for Command received from {sender}. Expected size: {1 + Marshal.SizeOf(typeof(Command))}");
+                        }
+                        break;
 
-                // Raise event to notify the UI
-                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {command.Direction}, Stop = {command.Stop}, StopBool = {command.StopBool}");
+                    case StructType.LocationData:
+                        if (result.Buffer.Length == 1 + Marshal.SizeOf(typeof(LocationData))) // 1 byte for type + struct size
+                        {
+                            LocationData locationData = DeserializeStruct<LocationData>(result.Buffer, 1);
+                            Console.WriteLine($"Received LocationData from {sender}: X = {locationData.x}, Y = {locationData.y}");
+
+                            // Notify UI
+                            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {locationData.x}, Speed = {locationData.y}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Invalid size for CommandType2 received from {sender}. Expected size: {1 + Marshal.SizeOf(typeof(LocationData))}");
+                        }
+                        break;
+
+                    default:
+                        Console.WriteLine($"Unknown command type received from {sender}: {structType}");
+                        break;
+                }
             }
             else
             {
-                Console.WriteLine($"Received {result.Buffer.Length} bytes from {sender}, expected {Marshal.SizeOf(typeof(Command))} bytes.");
+                Console.WriteLine($"Received an invalid packet of size {result.Buffer.Length} from {sender}");
             }
         }
     }
 
-
-
-    //Sending commands (struct) to esp devices
-    public async Task SendCommandToEspDevices(Command command)
+    public async Task SendDataToEspDevices<T>(StructType type, T packet) where T : struct
     {
-        //Test if struct size matches, remove later
-        Console.WriteLine($"Size of Command: {Marshal.SizeOf(typeof(Command))}");  // Log size of struct
+        byte[] packetBytes = SerializeStruct(type, packet);  // Serialize the struct
 
-        // Calculate the size of the struct
-        int size = Marshal.SizeOf(command);
-        byte[] commandBytes = new byte[size];
+        foreach (var deviceEndpoint in _esp32Devices)
+        {
+            await _udpClient.SendAsync(packetBytes, packetBytes.Length, deviceEndpoint);  // Send the packet over UDP
+            Console.WriteLine($"Command of type {type} sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
+        }
+    }
 
-        // Pin the command struct in memory and copy it to byte array
+
+    // Helper method to serialize a struct into a byte array
+    private byte[] SerializeStruct<T>(StructType type, T packet) where T : struct
+    {
+        int size = Marshal.SizeOf(typeof(T));         // Get the size of the struct
+        byte[] packetBytes = new byte[size + 1];      // +1 byte for the type at the start
+
+        packetBytes[0] = (byte)type;                  // First byte is the type
+
+        IntPtr ptr = Marshal.AllocHGlobal(size);      // Allocate memory for the struct
+        try
+        {
+            Marshal.StructureToPtr(packet, ptr, true);  // Convert struct to pointer
+            Marshal.Copy(ptr, packetBytes, 1, size);    // Copy the struct starting from index 1
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(ptr);                 // Free the allocated memory
+        }
+
+        return packetBytes;
+    }
+
+
+    // Helper method to deserialize a struct from a byte array
+    private T DeserializeStruct<T>(byte[] data, int offset) where T : struct
+    {
+        int size = Marshal.SizeOf(typeof(T));
         IntPtr ptr = Marshal.AllocHGlobal(size);
         try
         {
-            Marshal.StructureToPtr(command, ptr, true);
-            Marshal.Copy(ptr, commandBytes, 0, size);
+            Marshal.Copy(data, offset, ptr, size);  // Copy data starting from the offset
+            return Marshal.PtrToStructure<T>(ptr);
         }
         finally
         {
             Marshal.FreeHGlobal(ptr);
         }
-
-        foreach (var deviceEndpoint in _esp32Devices)
-        {
-            await _udpClient.SendAsync(commandBytes, commandBytes.Length, deviceEndpoint);
-            Console.WriteLine($"Command sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
-        }
     }
-
 
 }
