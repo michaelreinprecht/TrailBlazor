@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj": {}
+    "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj": {
+    "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj",
+        "projectUniqueName": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj",
         "projectName": "TrailBlazorServerApp",
-        "projectPath": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj",
+        "projectPath": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj",
         "packagesPath": "C:\\Users\\Zechs\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\",
+        "outputPath": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

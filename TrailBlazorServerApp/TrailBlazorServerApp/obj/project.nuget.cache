@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "yq3UECrlXXq6lbD6ReKn06Y2KiIA5pR9AkTXSo3hWdj4WIYVHqPzFQuV7TAPK4/Sk8XP1c8JlG6dZ9tm+5HMRw==",
+  "dgSpecHash": "jlK512YC4x/a3p5pSPTb4nXq2mO0mUEWLZqCn0ZwZm9gDWmo4R6NGJ1y3GywPKZsuuoto0zQpnbDBB/MTs5Vtg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj",
+  "projectFilePath": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\TrailBlazorServerApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Zechs\\.nuget\\packages\\google.protobuf\\3.28.2\\google.protobuf.3.28.2.nupkg.sha512"
   ],
