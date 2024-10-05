@@ -21,12 +21,12 @@
             <input @bind="directionInput" maxlength="1" />
         </div>
         <div>
-            <label>Stop (integer for some reason):</label>
-            <input type="number" @bind="command.Stop" min="0" max="1" />
+            <label>Speed:</label>
+            <input type="number" @bind="command.Speed" min="1" max="10" placeholder="10"/>
         </div>
         <div>
-            <label>StopBool:</label>
-            <input type="checkbox" @bind="isStopBoolChecked" />
+            <label>Stop:</label>
+            <input type="checkbox" @bind="isStopChecked" />
         </div>
         <button @onclick="SendCommand">Send to ESP Devices</button>
     }
@@ -62,7 +62,7 @@
 
     // Temp variables for input handling
     private string directionInput = "";
-    private bool isStopBoolChecked;
+    private bool isStopChecked;
 
     // Selected command type
     private string selectedCommandType = "Command";
@@ -81,10 +81,10 @@
         }
 
         // Convert the checkbox value to 0 or 1
-        command.StopBool = (byte)(isStopBoolChecked ? 1 : 0);
+        command.Stop = (byte)(isStopChecked ? 1 : 0);
 
         await UdpService.SendDataToEspDevices(StructType.Command, command);
-        statusMessage = $"Sent Command: Direction = {directionInput}, Stop = {command.Stop}, StopBool = {(isStopBoolChecked ? "True" : "False")}";
+        statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {command.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
     }
 
     private async Task SendLocationData()
@@ -100,8 +100,8 @@
         if (selectedCommandType == "Command")
         {
             directionInput = "";
-            command.Stop = 0;
-            isStopBoolChecked = false;
+            command.Speed = 10;
+            isStopChecked = false;
         }
         else if (selectedCommandType == "LocationData")
         {

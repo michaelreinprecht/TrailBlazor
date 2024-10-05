@@ -6,8 +6,8 @@ namespace TrailBlazorServerApp.Data
     public struct Command
     {
         public byte Direction;  
-        public int Stop;        
-        public byte StopBool;   
+        public int Speed;        
+        public byte Stop;   
     }
 
 }
