@@ -1,11 +1,17 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using System.Timers;
+using TrailBlazorServerApp.Data;
+using Timer = System.Timers.Timer;
 
 namespace TrailBlazorServerApp.Pages
 {
-    public partial class CarPage : ComponentBase
+    public partial class CarPage : ComponentBase, IDisposable
     {
+        [Inject]
+        public UdpCommunicationService? UdpService { get; set; }
+
         [Parameter]
         public int carID { get; set; }
 
@@ -14,6 +20,11 @@ namespace TrailBlazorServerApp.Pages
         private string downArrowColor = "black";
         private string rightArrowColor = "black";
 
+        // Timer to call SendCommandToESP every 500ms
+        private System.Timers.Timer? commandTimer;
+        private string statusMessage = "";
+        private List<string> receivedMessages = new();
+
         // Reference to the container div to programmatically focus
         private ElementReference arrowContainer;
 
@@ -21,7 +32,7 @@ namespace TrailBlazorServerApp.Pages
         private HashSet<string> pressedKeys = new();
 
         [Inject]
-        private IJSRuntime JSRuntime { get; set; }
+        private IJSRuntime? JSRuntime { get; set; }
 
         // This method handles the keydown event (when a key is pressed)
         private void HandleKeyDown(KeyboardEventArgs e)
@@ -54,6 +65,102 @@ namespace TrailBlazorServerApp.Pages
 
             // Refresh the UI to apply the changes
             StateHasChanged();
+        }
+
+        private async void SendCommandToESP()
+        {
+            char direction = GetDirection();
+            bool stop = false; //Default to false for now
+            int speed = 10; //Default to 10 for now
+
+            Command command = new Command();
+            command.Direction = (byte)direction;
+            command.Speed = speed; 
+            command.Stop = (byte)(stop ? 1 : 0); 
+
+            if (UdpService != null)
+            {
+                await UdpService.SendDataToEspDevices(StructType.Command, command);
+            }
+
+            string statusMessage = $"Sent Command: Direction = {direction}, Speed = {command.Speed}, Stop = {(stop ? "True" : "False")}";
+        }
+
+        private void HandleMessageReceived(string message)
+        {
+            receivedMessages.Add(message);
+            InvokeAsync(StateHasChanged); // Update the UI
+        }
+
+        private char GetDirection()
+        {
+            bool up = pressedKeys.Contains("w");
+            bool right = pressedKeys.Contains("d");
+            bool down = pressedKeys.Contains("s");
+            bool left = pressedKeys.Contains("a");
+
+            // Opposing directions cancel each other out
+            if (up && down)
+            {
+                up = false;
+                down = false;
+            }
+            if (left && right)
+            {
+                left = false;
+                right = false;
+            }
+
+            // Determine the direction based on the active keys
+            if (up && right)
+                return 'B'; // Up-Right
+            if (down && right)
+                return 'D'; // Down-Right
+            if (down && left)
+                return 'F'; // Down-Left
+            if (up && left)
+                return 'H'; // Up-Left
+
+            if (up)
+                return 'A'; // Forward
+            if (right)
+                return 'C'; // Right
+            if (down)
+                return 'E'; // Down
+            if (left)
+                return 'G'; // Left
+
+            return 'X'; // No direction or opposing directions cancel each other out
+        }
+
+        // Initialize the timer and start calling SendCommandToESP every 500ms
+        private void StartTimer()
+        {
+            commandTimer = new Timer(500); // 500ms interval
+            commandTimer.Elapsed += OnTimerElapsed; // Hook up the event handler
+            commandTimer.AutoReset = true; // Restart the timer after each interval
+            commandTimer.Enabled = true; // Enable the timer
+        }
+
+        private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+        {
+            InvokeAsync(() => SendCommandToESP()); // Call SendCommandToESP on the main thread
+        }
+
+        // Stop the timer when the component is disposed
+        public void Dispose()
+        {
+            if (commandTimer != null)
+            {
+                commandTimer.Stop();
+                commandTimer.Elapsed -= OnTimerElapsed;
+                commandTimer.Dispose();
+            }
+
+            if (UdpService != null)
+            {
+                UdpService.OnMessageReceived -= HandleMessageReceived;
+            }
         }
 
         private void HandleDirectionDown(string direction)
@@ -108,6 +215,9 @@ namespace TrailBlazorServerApp.Pages
                         await Task.Delay(delayMs); // Wait before retrying
                     }
                 }
+
+                // Start the timer after everything is initialized
+                StartTimer();
             }
         }
 

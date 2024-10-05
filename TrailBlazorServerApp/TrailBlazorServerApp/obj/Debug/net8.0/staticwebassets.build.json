@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "zGgnk7349c3RIvES7aApMVUXarc2P7QZ4pU24nLNHjo=",
+  "Hash": "4xE09y4wqvkj+LOcYbCtJivwI5Dw/3IpaZKr0R8EKPI=",
   "Source": "TrailBlazorServerApp",
   "BasePath": "_content/TrailBlazorServerApp",
   "Mode": "Default",
@@ -10,17 +10,17 @@
     {
       "Name": "TrailBlazorServerApp\\wwwroot",
       "Source": "TrailBlazorServerApp",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "Pattern": "**"
     }
   ],
   "Assets": [
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\bundle\\TrailBlazorServerApp.styles.css",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\bundle\\TrailBlazorServerApp.styles.css",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\bundle\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "TrailBlazorServerApp.styles.css",
       "AssetKind": "All",
@@ -33,13 +33,13 @@
       "AssetTraitValue": "ApplicationBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\bundle\\TrailBlazorServerApp.styles.css"
+      "OriginalItemSpec": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\bundle\\TrailBlazorServerApp.styles.css"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\TrailBlazorServerApp.bundle.scp.css",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\TrailBlazorServerApp.bundle.scp.css",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Computed",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "TrailBlazorServerApp.bundle.scp.css",
       "AssetKind": "All",
@@ -52,13 +52,13 @@
       "AssetTraitValue": "ProjectBundle",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\TrailBlazorServerApp.bundle.scp.css"
+      "OriginalItemSpec": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\TrailBlazorServerApp.bundle.scp.css"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/bootstrap/bootstrap.min.css",
       "AssetKind": "All",
@@ -74,10 +74,10 @@
       "OriginalItemSpec": "wwwroot\\css\\bootstrap\\bootstrap.min.css"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/bootstrap/bootstrap.min.css.map",
       "AssetKind": "All",
@@ -93,10 +93,10 @@
       "OriginalItemSpec": "wwwroot\\css\\bootstrap\\bootstrap.min.css.map"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/open-iconic/font/css/open-iconic-bootstrap.min.css",
       "AssetKind": "All",
@@ -112,10 +112,10 @@
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\font\\css\\open-iconic-bootstrap.min.css"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.eot",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.eot",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.eot",
       "AssetKind": "All",
@@ -131,10 +131,10 @@
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.eot"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.otf",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.otf",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.otf",
       "AssetKind": "All",
@@ -150,10 +150,10 @@
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.otf"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.svg",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.svg",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.svg",
       "AssetKind": "All",
@@ -169,10 +169,10 @@
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.svg"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.ttf",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.ttf",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.ttf",
       "AssetKind": "All",
@@ -188,10 +188,10 @@
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.ttf"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.woff",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.woff",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/open-iconic/font/fonts/open-iconic.woff",
       "AssetKind": "All",
@@ -207,10 +207,10 @@
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\font\\fonts\\open-iconic.woff"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\FONT-LICENSE",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\FONT-LICENSE",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/open-iconic/FONT-LICENSE",
       "AssetKind": "All",
@@ -226,10 +226,10 @@
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\FONT-LICENSE"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\ICON-LICENSE",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\ICON-LICENSE",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/open-iconic/ICON-LICENSE",
       "AssetKind": "All",
@@ -245,10 +245,10 @@
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\ICON-LICENSE"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\README.md",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\open-iconic\\README.md",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/open-iconic/README.md",
       "AssetKind": "All",
@@ -264,10 +264,10 @@
       "OriginalItemSpec": "wwwroot\\css\\open-iconic\\README.md"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\site.css",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\css\\site.css",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "css/site.css",
       "AssetKind": "All",
@@ -283,10 +283,10 @@
       "OriginalItemSpec": "wwwroot\\css\\site.css"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\favicon.ico",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\favicon.ico",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "favicon.ico",
       "AssetKind": "All",
@@ -302,10 +302,10 @@
       "OriginalItemSpec": "wwwroot\\favicon.ico"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\images\\arrow.png",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\images\\arrow.png",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "images/arrow.png",
       "AssetKind": "All",
@@ -321,10 +321,10 @@
       "OriginalItemSpec": "wwwroot\\images\\arrow.png"
     },
     {
-      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\js\\deviceTilt.js",
+      "Identity": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\js\\deviceTilt.js",
       "SourceId": "TrailBlazorServerApp",
       "SourceType": "Discovered",
-      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
+      "ContentRoot": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\",
       "BasePath": "_content/TrailBlazorServerApp",
       "RelativePath": "js/deviceTilt.js",
       "AssetKind": "All",
