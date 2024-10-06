@@ -81,7 +81,7 @@ namespace TrailBlazorServerApp.Pages
             if (UdpService != null)
             {
                 await UdpService.SendDataToEspDevices(StructType.Command, command);
-                string statusMessage = $"Sent Command: Direction = {direction}, Speed = {command.Speed}, Stop = {(stop ? "True" : "False")}";
+                statusMessage = $"Sent Command: Direction = {direction}, Speed = {command.Speed}, Stop = {(stop ? "True" : "False")}";
                 StateHasChanged(); // Refresh the UI to reflect the latest status message
             }
         }
@@ -149,21 +149,24 @@ namespace TrailBlazorServerApp.Pages
             InvokeAsync(() => SendCommandToESP()); // Call SendCommandToESP on the main thread
         }
 
-        // Stop the timer when the component is disposed
         public void Dispose()
         {
+            // Stop the timer if it exists
             if (commandTimer != null)
             {
-                commandTimer.Stop();
-                commandTimer.Elapsed -= OnTimerElapsed;
-                commandTimer.Dispose();
+                commandTimer.Stop(); // Stop the timer
+                commandTimer.Elapsed -= OnTimerElapsed; // Unsubscribe from the event
+                commandTimer.Dispose(); // Dispose of the timer
+                commandTimer = null; // Set to null to avoid further access
             }
 
+            // Unsubscribe from UdpService events to prevent memory leaks
             if (UdpService != null)
             {
                 UdpService.OnMessageReceived -= HandleMessageReceived;
             }
         }
+
 
         private void HandleDirectionDown(string direction)
         {
