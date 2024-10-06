@@ -181,8 +181,20 @@ namespace TrailBlazorServerApp.Pages
             UpdateArrowColors();
         }
 
+        protected override async Task OnInitializedAsync()
+        {
+            if (UdpService != null)
+            {
+                var cancellationToken = new CancellationTokenSource().Token;
+                await UdpService.StartListeningForResponses(cancellationToken); 
+                UdpService.OnMessageReceived += HandleMessageReceived;
+            }
+        }
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            Console.WriteLine("a render");
+
             if (firstRender)
             {
                 // Set focus on the container div so it can capture key presses
@@ -225,6 +237,7 @@ namespace TrailBlazorServerApp.Pages
         [JSInvokable]
         public void OnTiltChange(double tiltX, double tiltY)
         {
+            Console.WriteLine("Tilt Change lmao");
             // Clear previous keys
             pressedKeys.Clear();
 
