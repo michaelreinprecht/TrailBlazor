@@ -81,16 +81,18 @@ namespace TrailBlazorServerApp.Pages
             if (UdpService != null)
             {
                 await UdpService.SendDataToEspDevices(StructType.Command, command);
+                string statusMessage = $"Sent Command: Direction = {direction}, Speed = {command.Speed}, Stop = {(stop ? "True" : "False")}";
+                StateHasChanged(); // Refresh the UI to reflect the latest status message
             }
-
-            string statusMessage = $"Sent Command: Direction = {direction}, Speed = {command.Speed}, Stop = {(stop ? "True" : "False")}";
         }
 
         private void HandleMessageReceived(string message)
         {
+            Console.WriteLine($"Received message: {message}"); // Log the message for debugging
             receivedMessages.Add(message);
             InvokeAsync(StateHasChanged); // Update the UI
         }
+
 
         private char GetDirection()
         {
@@ -185,16 +187,19 @@ namespace TrailBlazorServerApp.Pages
         {
             if (UdpService != null)
             {
+                UdpService.OnMessageReceived += HandleMessageReceived; // Subscribe to the event
                 var cancellationToken = new CancellationTokenSource().Token;
-                await UdpService.StartListeningForResponses(cancellationToken); 
-                UdpService.OnMessageReceived += HandleMessageReceived;
+                await UdpService.StartListeningForResponses(cancellationToken);
+            }
+            else
+            {
+                Console.WriteLine("UdpService is null! Make sure it's injected correctly.");
             }
         }
 
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Console.WriteLine("a render");
-
             if (firstRender)
             {
                 // Set focus on the container div so it can capture key presses
@@ -237,7 +242,6 @@ namespace TrailBlazorServerApp.Pages
         [JSInvokable]
         public void OnTiltChange(double tiltX, double tiltY)
         {
-            Console.WriteLine("Tilt Change lmao");
             // Clear previous keys
             pressedKeys.Clear();
 

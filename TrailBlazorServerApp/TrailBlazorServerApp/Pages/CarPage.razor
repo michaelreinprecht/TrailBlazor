@@ -50,9 +50,16 @@
 
 <h4>Responses from ESP Devices</h4>
 <ul>
-    @foreach (var response in receivedMessages)
+    @if (receivedMessages.Any())
     {
-        <li>@response</li>
+        foreach (var response in receivedMessages)
+        {
+            <li>@response</li>
+        }
+    }
+    else
+    {
+        <li>No messages received yet.</li>
     }
 </ul>
 
