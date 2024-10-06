@@ -9,8 +9,8 @@ namespace TrailBlazorServerApp.Pages
 {
     public partial class CarPage : ComponentBase, IDisposable
     {
-        [Inject]
-        public UdpCommunicationService? UdpService { get; set; }
+        //[Inject]
+        //public UdpCommunicationService? UdpService { get; set; }
 
         [Parameter]
         public int carID { get; set; }

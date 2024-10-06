@@ -1,4 +1,5 @@
 ﻿@page "/car/{carID:int}"
+@inject UdpCommunicationService UdpService
 
 <div class="container text-center" tabindex="0" @ref="arrowContainer" @onkeydown="HandleKeyDown" @onkeyup="HandleKeyUp">
     <h3 class="text-primary">Car @carID</h3>
