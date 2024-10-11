@@ -3,11 +3,10 @@
 namespace TrailBlazorServerApp.Data
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]  // Ensure 1-byte alignment like in C
-    public struct Command
+    public struct MoveToCommand
     {
-        public byte Direction;  
-        public int Speed;        
-        public byte Stop;   
+        public int x;
+        public int y;
     }
 
 }

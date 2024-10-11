@@ -73,14 +73,14 @@ namespace TrailBlazorServerApp.Pages
             bool stop = false; //Default to false for now
             int speed = 10; //Default to 10 for now
 
-            Command command = new Command();
+            ControlCommand command = new ControlCommand();
             command.Direction = (byte)direction;
             command.Speed = speed; 
             command.Stop = (byte)(stop ? 1 : 0); 
 
             if (UdpService != null)
             {
-                await UdpService.SendDataToEspDevices(StructType.Command, command);
+                await UdpService.SendDataToEspDevices(MessageType.ControlCommand, command);
                 statusMessage = $"Sent Command: Direction = {direction}, Speed = {command.Speed}, Stop = {(stop ? "True" : "False")}";
                 StateHasChanged(); // Refresh the UI to reflect the latest status message
             }
@@ -149,7 +149,7 @@ namespace TrailBlazorServerApp.Pages
             InvokeAsync(() => SendCommandToESP()); // Call SendCommandToESP on the main thread
         }
 
-        public void Dispose()
+        void IDisposable.Dispose()
         {
             // Stop the timer if it exists
             if (commandTimer != null)

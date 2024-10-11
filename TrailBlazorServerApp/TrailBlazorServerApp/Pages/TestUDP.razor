@@ -55,8 +55,8 @@
 </ul>
 
 @code {
-    private Command command = new Command();
-    private LocationData locationData = new LocationData();
+    private ControlCommand command = new ControlCommand();
+    private MoveToCommand locationData = new MoveToCommand();
     private string statusMessage = "";
     private List<string> receivedMessages = new(); // Store received messages
 
@@ -83,13 +83,13 @@
         // Convert the checkbox value to 0 or 1
         command.Stop = (byte)(isStopChecked ? 1 : 0);
 
-        await UdpService.SendDataToEspDevices(StructType.Command, command);
+        await UdpService.SendDataToEspDevices(MessageType.Command, command);
         statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {command.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
     }
 
     private async Task SendLocationData()
     {
-        await UdpService.SendDataToEspDevices(StructType.LocationData, locationData);
+        await UdpService.SendDataToEspDevices(MessageType.LocationData, locationData);
         statusMessage = $"Sent Location Data: X = {locationData.x}, Y = {locationData.y}";
     }
 

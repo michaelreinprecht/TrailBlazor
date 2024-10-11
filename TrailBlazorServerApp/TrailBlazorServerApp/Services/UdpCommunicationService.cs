@@ -34,48 +34,60 @@ public class UdpCommunicationService
             var result = await _udpClient.ReceiveAsync();
             var sender = result.RemoteEndPoint;
 
-            // Check if we received at least 1 byte for the struct type
-            if (result.Buffer.Length >= 1)
+            // Check if we received at least a header
+            if (result.Buffer.Length >= Marshal.SizeOf(typeof(Header)))
             {
-                // First byte is the enum for the struct type
-                StructType structType = (StructType)result.Buffer[0];
+                // Deserialize the header
+                Header receivedHeader = DeserializeStruct<Header>(result.Buffer, 0);
+                Console.WriteLine($"Received header: Version = {receivedHeader.VersionNumber}, Message Type = {receivedHeader.MessageType}, Flags = {receivedHeader.Flags}");
 
-                // Handle different struct types based on the command type
-                switch (structType)
+                int headerSize = Marshal.SizeOf(typeof(Header));
+                int expectedPayloadLength = receivedHeader.Length;
+                int actualPayloadLength = result.Buffer.Length - headerSize;
+
+                if (actualPayloadLength == expectedPayloadLength)
                 {
-                    case StructType.Command:
-                        if (result.Buffer.Length == 1 + Marshal.SizeOf(typeof(Command))) // 1 byte for type + struct size
-                        {
-                            Command command = DeserializeStruct<Command>(result.Buffer, 1);
-                            Console.WriteLine($"Received Command from {sender}: Direction = {command.Direction}, Speed = {command.Speed}, Stop = {command.Stop}");
+                    // Handle the payload based on message type
+                    switch ((MessageType)receivedHeader.MessageType)
+                    {
+                        case MessageType.ControlCommand:
+                            if (expectedPayloadLength == Marshal.SizeOf(typeof(ControlCommand)))
+                            {
+                                ControlCommand command = DeserializeStruct<ControlCommand>(result.Buffer, headerSize);
+                                Console.WriteLine($"Received Command from {sender}: Direction = {command.Direction}, Speed = {command.Speed}, Stop = {command.Stop}");
 
-                            // Notify UI
-                            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {command.Direction}, Speed = {command.Speed}, Stop = {command.Stop}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Invalid size for Command received from {sender}. Expected size: {1 + Marshal.SizeOf(typeof(Command))}");
-                        }
-                        break;
+                                // Notify UI
+                                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {command.Direction}, Speed = {command.Speed}, Stop = {command.Stop}");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Invalid size for ControlCommand received from {sender}. Expected size: {Marshal.SizeOf(typeof(ControlCommand))}");
+                            }
+                            break;
 
-                    case StructType.LocationData:
-                        if (result.Buffer.Length == 1 + Marshal.SizeOf(typeof(LocationData))) // 1 byte for type + struct size
-                        {
-                            LocationData locationData = DeserializeStruct<LocationData>(result.Buffer, 1);
-                            Console.WriteLine($"Received LocationData from {sender}: X = {locationData.x}, Y = {locationData.y}");
+                        case MessageType.MoveToCommand:
+                            if (expectedPayloadLength == Marshal.SizeOf(typeof(MoveToCommand)))
+                            {
+                                MoveToCommand moveToCommand = DeserializeStruct<MoveToCommand>(result.Buffer, headerSize);
+                                Console.WriteLine($"Received MoveToCommand from {sender}: X = {moveToCommand.x}, Y = {moveToCommand.y}");
 
-                            // Notify UI
-                            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {locationData.x}, Speed = {locationData.y}");
-                        }
-                        else
-                        {
-                            Console.WriteLine($"Invalid size for CommandType2 received from {sender}. Expected size: {1 + Marshal.SizeOf(typeof(LocationData))}");
-                        }
-                        break;
+                                // Notify UI
+                                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - X = {moveToCommand.x}, Y = {moveToCommand.y}");
+                            }
+                            else
+                            {
+                                Console.WriteLine($"Invalid size for MoveToCommand received from {sender}. Expected size: {Marshal.SizeOf(typeof(MoveToCommand))}");
+                            }
+                            break;
 
-                    default:
-                        Console.WriteLine($"Unknown command type received from {sender}: {structType}");
-                        break;
+                        default:
+                            Console.WriteLine($"Unknown message type received from {sender}: {receivedHeader.MessageType}");
+                            break;
+                    }
+                }
+                else
+                {
+                    Console.WriteLine($"Payload length mismatch: expected {expectedPayloadLength}, but got {actualPayloadLength}");
                 }
             }
             else
@@ -85,9 +97,20 @@ public class UdpCommunicationService
         }
     }
 
-    public async Task SendDataToEspDevices<T>(StructType type, T packet) where T : struct
+    public async Task SendDataToEspDevices<T>(MessageType type, T packet) where T : struct
     {
-        byte[] packetBytes = SerializeStruct(type, packet);  // Serialize the struct
+        int payloadSize = Marshal.SizeOf(typeof(T));
+
+        Header header = new Header
+        {
+            VersionNumber = 1,
+            MessageType = (byte)type,
+            Flags = (byte)Flags.NACK, //Currently just never ask for an ACK -> TODO send ACK if this is Flags.ACK when receiving
+            Length = (byte)payloadSize,
+        };
+
+        //Serialize header and packet
+        byte[] packetBytes = SerializePacket(header, packet);
 
         foreach (var deviceEndpoint in _esp32Devices)
         {
@@ -98,18 +121,24 @@ public class UdpCommunicationService
 
 
     // Helper method to serialize a struct into a byte array
-    private byte[] SerializeStruct<T>(StructType type, T packet) where T : struct
+    private byte[] SerializePacket<T>(Header header, T packet) where T : struct
     {
-        int size = Marshal.SizeOf(typeof(T));         // Get the size of the struct
-        byte[] packetBytes = new byte[size + 1];      // +1 byte for the type at the start
+        int headerSize = Marshal.SizeOf(typeof(Header));
+        int payloadSize = Marshal.SizeOf(typeof(T));         // Get the size of the struct
+        int packetLength = headerSize + payloadSize;
+        byte[] packetBytes = new byte[packetLength];      // +1 byte for the type at the start
 
-        packetBytes[0] = (byte)type;                  // First byte is the type
 
-        IntPtr ptr = Marshal.AllocHGlobal(size);      // Allocate memory for the struct
+        IntPtr ptr = Marshal.AllocHGlobal(packetLength);      // Allocate memory for the struct
         try
         {
-            Marshal.StructureToPtr(packet, ptr, true);  // Convert struct to pointer
-            Marshal.Copy(ptr, packetBytes, 1, size);    // Copy the struct starting from index 1
+            // Copy the header into the byte array
+            Marshal.StructureToPtr(header, ptr, true);
+            Marshal.Copy(ptr, packetBytes, 0, headerSize);
+
+            // Copy the payload into the byte array after the header
+            Marshal.StructureToPtr(packet, ptr + headerSize, true);
+            Marshal.Copy(ptr + headerSize, packetBytes, headerSize, payloadSize);
         }
         finally
         {
