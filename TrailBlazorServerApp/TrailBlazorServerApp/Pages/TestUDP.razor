@@ -22,7 +22,7 @@
         </div>
         <div>
             <label>Speed:</label>
-            <input type="number" @bind="command.Speed" min="1" max="10" placeholder="10"/>
+            <input type="number" @bind="controlCommand.Speed" min="1" max="10" placeholder="10"/>
         </div>
         <div>
             <label>Stop:</label>
@@ -34,11 +34,11 @@
     {
         <div>
             <label>X:</label>
-            <input type="number" @bind="locationData.x" />
+            <input type="number" @bind="moveToCommand.x" />
         </div>
         <div>
             <label>Y:</label>
-            <input type="number" @bind="locationData.y" />
+            <input type="number" @bind="moveToCommand.y" />
         </div>
         <button @onclick="SendLocationData">Send Location Data to ESP Devices</button>
     }
@@ -55,8 +55,8 @@
 </ul>
 
 @code {
-    private ControlCommand command = new ControlCommand();
-    private MoveToCommand locationData = new MoveToCommand();
+    private ControlCommand controlCommand = new ControlCommand();
+    private MoveToCommand moveToCommand = new MoveToCommand();
     private string statusMessage = "";
     private List<string> receivedMessages = new(); // Store received messages
 
@@ -72,7 +72,7 @@
         // Convert the single character to byte (ASCII)
         if (!string.IsNullOrEmpty(directionInput) && directionInput.Length == 1)
         {
-            command.Direction = (byte)directionInput[0];  // ASCII value of the character
+            controlCommand.Direction = (byte)directionInput[0];  // ASCII value of the character
         }
         else
         {
@@ -81,16 +81,16 @@
         }
 
         // Convert the checkbox value to 0 or 1
-        command.Stop = (byte)(isStopChecked ? 1 : 0);
+        controlCommand.Stop = (byte)(isStopChecked ? 1 : 0);
 
-        await UdpService.SendDataToEspDevices(MessageType.Command, command);
-        statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {command.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
+        await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand);
+        statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {controlCommand.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
     }
 
     private async Task SendLocationData()
     {
-        await UdpService.SendDataToEspDevices(MessageType.LocationData, locationData);
-        statusMessage = $"Sent Location Data: X = {locationData.x}, Y = {locationData.y}";
+        await UdpService.SendDataToEspDevices(MessageType.MoveToCommand, moveToCommand);
+        statusMessage = $"Sent Location Data: X = {moveToCommand.x}, Y = {moveToCommand.y}";
     }
 
     private void OnCommandTypeChange(ChangeEventArgs e)
@@ -100,13 +100,13 @@
         if (selectedCommandType == "Command")
         {
             directionInput = "";
-            command.Speed = 10;
+            controlCommand.Speed = 10;
             isStopChecked = false;
         }
         else if (selectedCommandType == "LocationData")
         {
-            locationData.x = 0;
-            locationData.y = 0;
+            moveToCommand.x = 0;
+            moveToCommand.y = 0;
         }
     }
 

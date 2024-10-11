@@ -9,8 +9,6 @@ namespace TrailBlazorServerApp.Pages
 {
     public partial class CarPage : ComponentBase, IDisposable
     {
-        //[Inject]
-        //public UdpCommunicationService? UdpService { get; set; }
 
         [Parameter]
         public int carID { get; set; }
@@ -21,7 +19,7 @@ namespace TrailBlazorServerApp.Pages
         private string rightArrowColor = "black";
 
         // Timer to call SendCommandToESP every 500ms
-        private System.Timers.Timer? commandTimer;
+        private System.Timers.Timer? udpSendTimer;
         private string statusMessage = "";
         private List<string> receivedMessages = new();
 
@@ -73,15 +71,15 @@ namespace TrailBlazorServerApp.Pages
             bool stop = false; //Default to false for now
             int speed = 10; //Default to 10 for now
 
-            ControlCommand command = new ControlCommand();
-            command.Direction = (byte)direction;
-            command.Speed = speed; 
-            command.Stop = (byte)(stop ? 1 : 0); 
+            ControlCommand controlCommand = new ControlCommand();
+            controlCommand.Direction = (byte)direction;
+            controlCommand.Speed = speed; 
+            controlCommand.Stop = (byte)(stop ? 1 : 0); 
 
             if (UdpService != null)
             {
-                await UdpService.SendDataToEspDevices(MessageType.ControlCommand, command);
-                statusMessage = $"Sent Command: Direction = {direction}, Speed = {command.Speed}, Stop = {(stop ? "True" : "False")}";
+                await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand);
+                statusMessage = $"Sent Command: Direction = {direction}, Speed = {controlCommand.Speed}, Stop = {(stop ? "True" : "False")}";
                 StateHasChanged(); // Refresh the UI to reflect the latest status message
             }
         }
@@ -138,10 +136,10 @@ namespace TrailBlazorServerApp.Pages
         // Initialize the timer and start calling SendCommandToESP every 500ms
         private void StartTimer()
         {
-            commandTimer = new Timer(500); // 500ms interval
-            commandTimer.Elapsed += OnTimerElapsed; // Hook up the event handler
-            commandTimer.AutoReset = true; // Restart the timer after each interval
-            commandTimer.Enabled = true; // Enable the timer
+            udpSendTimer = new Timer(500); // 500ms interval
+            udpSendTimer.Elapsed += OnTimerElapsed; // Hook up the event handler
+            udpSendTimer.AutoReset = true; // Restart the timer after each interval
+            udpSendTimer.Enabled = true; // Enable the timer
         }
 
         private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
@@ -152,12 +150,12 @@ namespace TrailBlazorServerApp.Pages
         void IDisposable.Dispose()
         {
             // Stop the timer if it exists
-            if (commandTimer != null)
+            if (udpSendTimer != null)
             {
-                commandTimer.Stop(); // Stop the timer
-                commandTimer.Elapsed -= OnTimerElapsed; // Unsubscribe from the event
-                commandTimer.Dispose(); // Dispose of the timer
-                commandTimer = null; // Set to null to avoid further access
+                udpSendTimer.Stop(); // Stop the timer
+                udpSendTimer.Elapsed -= OnTimerElapsed; // Unsubscribe from the event
+                udpSendTimer.Dispose(); // Dispose of the timer
+                udpSendTimer = null; // Set to null to avoid further access
             }
 
             // Unsubscribe from UdpService events to prevent memory leaks

@@ -53,11 +53,11 @@ public class UdpCommunicationService
                         case MessageType.ControlCommand:
                             if (expectedPayloadLength == Marshal.SizeOf(typeof(ControlCommand)))
                             {
-                                ControlCommand command = DeserializeStruct<ControlCommand>(result.Buffer, headerSize);
-                                Console.WriteLine($"Received Command from {sender}: Direction = {command.Direction}, Speed = {command.Speed}, Stop = {command.Stop}");
+                                ControlCommand controlCommand = DeserializeStruct<ControlCommand>(result.Buffer, headerSize);
+                                Console.WriteLine($"Received ControlCommand from {sender}: Direction = {controlCommand.Direction}, Speed = {controlCommand.Speed}, Stop = {controlCommand.Stop}");
 
                                 // Notify UI
-                                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {command.Direction}, Speed = {command.Speed}, Stop = {command.Stop}");
+                                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {controlCommand.Direction}, Speed = {controlCommand.Speed}, Stop = {controlCommand.Stop}");
                             }
                             else
                             {
