@@ -24,6 +24,22 @@ public class UdpCommunicationService
         _udpClient = new UdpClient(ListeningPort);
     }
 
+    // Method to send an acknowledgment message back to the sender
+    private async Task SendAck(IPEndPoint sender, byte versionNumber)
+    {
+        Header ackHeader = new Header
+        {
+            VersionNumber = versionNumber, // Use the same version number as the received packet
+            MessageType = (byte)MessageType.ACK, // ACK message type
+            Flags = (byte)Flags.NACK_FLAG, // No need for further ACKs
+            Length = 0 // No payload for ACK
+        };
+
+        byte[] ackPacket = SerializePacket(ackHeader); // ACK has no payload
+        await _udpClient.SendAsync(ackPacket, ackPacket.Length, sender);
+        Console.WriteLine($"ACK sent to {sender.Address}:{sender.Port}");
+    }
+
     // Start listening for responses (this runs in the background)
     public async Task StartListeningForResponses(CancellationToken cancellationToken)
     {
@@ -41,6 +57,13 @@ public class UdpCommunicationService
                 Header receivedHeader = DeserializeStruct<Header>(result.Buffer, 0);
                 Console.WriteLine($"Received header: Version = {receivedHeader.VersionNumber}, Message Type = {receivedHeader.MessageType}, Flags = {receivedHeader.Flags}");
 
+                // If an ACK_FLAG is set, send an acknowledgment response, but never send an ACK for an ACK
+                if (receivedHeader.Flags == (byte)Flags.ACK_FLAG && receivedHeader.MessageType != (byte)MessageType.ACK)
+                {
+                    Console.WriteLine("ACK flag set, sending acknowledgment response");
+                    await SendAck(sender, receivedHeader.VersionNumber);
+                }
+
                 int headerSize = Marshal.SizeOf(typeof(Header));
                 int expectedPayloadLength = receivedHeader.Length;
                 int actualPayloadLength = result.Buffer.Length - headerSize;
@@ -50,6 +73,16 @@ public class UdpCommunicationService
                     // Handle the payload based on message type
                     switch ((MessageType)receivedHeader.MessageType)
                     {
+                        case MessageType.ERR:
+                            //TODO: Handle error messages
+                            Console.WriteLine($"Received error message!");
+                            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Received error message!");
+                            break;
+                        case MessageType.ACK:
+                            //TODO: Handle ack messages
+                            Console.WriteLine($"Received ACK message!");
+                            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Received ACK message!");
+                            break;
                         case MessageType.ControlCommand:
                             if (expectedPayloadLength == Marshal.SizeOf(typeof(ControlCommand)))
                             {
@@ -97,7 +130,7 @@ public class UdpCommunicationService
         }
     }
 
-    public async Task SendDataToEspDevices<T>(MessageType type, T packet) where T : struct
+    public async Task SendDataToEspDevices<T>(MessageType type, T packet, Flags flags = Flags.NACK_FLAG) where T : struct
     {
         int payloadSize = Marshal.SizeOf(typeof(T));
 
@@ -105,12 +138,34 @@ public class UdpCommunicationService
         {
             VersionNumber = 1,
             MessageType = (byte)type,
-            Flags = (byte)Flags.NACK, //Currently just never ask for an ACK -> TODO send ACK if this is Flags.ACK when receiving
+            Flags = (byte)flags, //Currently just always expect and ACK ...
             Length = (byte)payloadSize,
         };
 
         //Serialize header and packet
         byte[] packetBytes = SerializePacket(header, packet);
+
+        foreach (var deviceEndpoint in _esp32Devices)
+        {
+            await _udpClient.SendAsync(packetBytes, packetBytes.Length, deviceEndpoint);  // Send the packet over UDP
+            Console.WriteLine($"Command of type {type} sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
+        }
+    }
+
+    public async Task SendDataToEspDevices<T>(MessageType type, Flags flags = Flags.NACK_FLAG) where T : struct
+    {
+        int payloadSize = Marshal.SizeOf(typeof(T));
+
+        Header header = new Header
+        {
+            VersionNumber = 1,
+            MessageType = (byte)type,
+            Flags = (byte)flags, //Currently just always expect and ACK ...
+            Length = (byte)payloadSize,
+        };
+
+        //Serialize header and packet
+        byte[] packetBytes = SerializePacket(header);
 
         foreach (var deviceEndpoint in _esp32Devices)
         {
@@ -143,6 +198,27 @@ public class UdpCommunicationService
         finally
         {
             Marshal.FreeHGlobal(ptr);                 // Free the allocated memory
+        }
+
+        return packetBytes;
+    }
+
+    // Overloaded method to serialize only the header into a byte array (for ACK messages)
+    private byte[] SerializePacket(Header header)
+    {
+        int headerSize = Marshal.SizeOf(typeof(Header));
+        byte[] packetBytes = new byte[headerSize];
+
+        IntPtr ptr = Marshal.AllocHGlobal(headerSize); // Allocate memory for the header only
+        try
+        {
+            // Copy the header into the byte array
+            Marshal.StructureToPtr(header, ptr, true);
+            Marshal.Copy(ptr, packetBytes, 0, headerSize);
+        }
+        finally
+        {
+            Marshal.FreeHGlobal(ptr); // Free the allocated memory
         }
 
         return packetBytes;

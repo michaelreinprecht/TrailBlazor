@@ -6,6 +6,10 @@
 <h3>Send Command to ESP32C3 Devices</h3>
 
 <div>
+    <button @onclick="SendAckMessage">Send ACK Message</button>
+</div>
+
+<div>
     <label>Select Command Type:</label>
     <select value="@selectedCommandType" @onchange="OnCommandTypeChange">
         <option value="Command">Command</option>
@@ -57,7 +61,7 @@
 @code {
     private ControlCommand controlCommand = new ControlCommand();
     private MoveToCommand moveToCommand = new MoveToCommand();
-    private string statusMessage = "";
+    private string statusMessage = "Ready";
     private List<string> receivedMessages = new(); // Store received messages
 
     // Temp variables for input handling
@@ -66,6 +70,21 @@
 
     // Selected command type
     private string selectedCommandType = "Command";
+
+    private async Task SendAckMessage()
+    {
+        statusMessage = "Sending ACK message...";
+        try
+        {
+            // Call the method to send an ACK message directly
+            await UdpService.SendDataToEspDevices(MessageType.ACK, Flags.NACK_FLAG);
+            statusMessage = "ACK message sent successfully.";
+        }
+        catch (Exception ex)
+        {
+            statusMessage = $"Error sending ACK message: {ex.Message}";
+        }
+    }
 
     private async Task SendCommand()
     {
@@ -83,13 +102,13 @@
         // Convert the checkbox value to 0 or 1
         controlCommand.Stop = (byte)(isStopChecked ? 1 : 0);
 
-        await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand);
+        await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, Flags.ACK_FLAG);
         statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {controlCommand.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
     }
 
     private async Task SendLocationData()
     {
-        await UdpService.SendDataToEspDevices(MessageType.MoveToCommand, moveToCommand);
+        await UdpService.SendDataToEspDevices(MessageType.MoveToCommand, moveToCommand, Flags.ACK_FLAG);
         statusMessage = $"Sent Location Data: X = {moveToCommand.x}, Y = {moveToCommand.y}";
     }
 
