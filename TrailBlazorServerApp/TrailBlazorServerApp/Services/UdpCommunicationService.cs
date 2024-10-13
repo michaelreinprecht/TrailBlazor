@@ -152,16 +152,14 @@ public class UdpCommunicationService
         }
     }
 
-    public async Task SendDataToEspDevices<T>(MessageType type, Flags flags = Flags.NACK_FLAG) where T : struct
+    public async Task SendDataToEspDevices(MessageType type, Flags flags = Flags.NACK_FLAG)
     {
-        int payloadSize = Marshal.SizeOf(typeof(T));
-
         Header header = new Header
         {
             VersionNumber = 1,
             MessageType = (byte)type,
             Flags = (byte)flags, //Currently just always expect and ACK ...
-            Length = (byte)payloadSize,
+            Length = 0,
         };
 
         //Serialize header and packet
