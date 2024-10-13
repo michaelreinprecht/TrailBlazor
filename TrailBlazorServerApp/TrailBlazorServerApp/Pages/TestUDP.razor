@@ -131,6 +131,7 @@
 
     private void HandleMessageReceived(string message)
     {
+        Console.WriteLine($"Received message: {message}"); // Log the message for debugging
         receivedMessages.Add(message);
         InvokeAsync(StateHasChanged); // Update the UI
     }
@@ -139,6 +140,29 @@
     public void Dispose()
     {
         UdpService.OnMessageReceived -= HandleMessageReceived;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        InitUdpService();
+        await base.OnInitializedAsync();
+    }
+
+    protected override async void OnParametersSet() {
+        InitUdpService();
+    }
+
+    private async void InitUdpService() {
+        if (UdpService != null)
+        {
+            UdpService.OnMessageReceived += HandleMessageReceived; // Subscribe to the event
+            var cancellationToken = new CancellationTokenSource().Token;
+            await UdpService.StartListeningForResponses(cancellationToken);
+        }
+        else
+        {
+            Console.WriteLine("UdpService is null! Make sure it's injected correctly.");
+        }
     }
 }
 

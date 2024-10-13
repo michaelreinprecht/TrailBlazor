@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TrailBlazorServerApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f9bfe455ed9b04d484c8dc1c14f3ff31773deec3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+d223a06695f2b745d06b9c848994aef296829449")]
 [assembly: System.Reflection.AssemblyProductAttribute("TrailBlazorServerApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TrailBlazorServerApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
