@@ -67,13 +67,13 @@ namespace TrailBlazorServerApp.Pages
 
         private async void SendCommandToESP()
         {
+            int speed = 10; //Default to 10 for now
             char direction = GetDirection();
             bool stop = false; //Default to false for now
-            int speed = 10; //Default to 10 for now
 
             ControlCommand controlCommand = new ControlCommand();
-            controlCommand.Direction = (byte)direction;
             controlCommand.Speed = speed; 
+            controlCommand.Direction = (byte)direction;
             controlCommand.Stop = (byte)(stop ? 1 : 0); 
 
             if (UdpService != null)
