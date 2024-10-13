@@ -144,13 +144,13 @@
 
     protected override async Task OnInitializedAsync()
     {
-        InitUdpService();
         await base.OnInitializedAsync();
+        InitUdpService();
     }
 
-    protected override async void OnParametersSet() {
-        InitUdpService();
-    }
+    // protected override async void OnParametersSet() {
+    //     InitUdpService();
+    // }
 
     private async void InitUdpService() {
         if (UdpService != null)
