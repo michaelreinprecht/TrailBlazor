@@ -154,6 +154,7 @@ namespace TrailBlazorServerApp.Pages
             {
                 udpSendTimer.Stop(); // Stop the timer
                 udpSendTimer.Elapsed -= OnTimerElapsed; // Unsubscribe from the event
+                udpSendTimer.Enabled = false;
                 udpSendTimer.Dispose(); // Dispose of the timer
                 udpSendTimer = null; // Set to null to avoid further access
             }
@@ -164,7 +165,6 @@ namespace TrailBlazorServerApp.Pages
                 UdpService.OnMessageReceived -= HandleMessageReceived;
             }
         }
-
 
         private void HandleDirectionDown(string direction)
         {
