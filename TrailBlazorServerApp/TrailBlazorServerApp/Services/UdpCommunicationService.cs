@@ -1,12 +1,17 @@
-﻿using System.Data;
+﻿using System.Collections.Generic;
+using System.Data;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using TrailBlazorServerApp.Data;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class UdpCommunicationService
 {
+    public static byte SequenceNumber { get; set; }
+    private byte LastReceivedSequenceNumber { get; set; }
+
     private readonly List<IPEndPoint> _esp32Devices = new()
     {
         new IPEndPoint(IPAddress.Parse("192.168.4.100"), 4444), // ESP32C3 #1
@@ -32,6 +37,7 @@ public class UdpCommunicationService
             VersionNumber = versionNumber, // Use the same version number as the received packet
             MessageType = (byte)MessageType.ACK, // ACK message type
             Flags = byte.MinValue, // No need for further ACKs
+            SequenceNumber = SequenceNumber++,
             Length = 0 // No payload for ACK
         };
 
@@ -68,59 +74,66 @@ public class UdpCommunicationService
                 int expectedPayloadLength = receivedHeader.Length;
                 int actualPayloadLength = result.Buffer.Length - headerSize;
 
-                if (actualPayloadLength == expectedPayloadLength)
+                if (IsSequenceNumberValid(receivedHeader.SequenceNumber))
                 {
-                    // Handle the payload based on message type
-                    switch ((MessageType)receivedHeader.MessageType)
+                    if (actualPayloadLength == expectedPayloadLength)
                     {
-                        case MessageType.ERR:
-                            //TODO: Handle error messages
-                            Console.WriteLine($"Received error message!");
-                            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Received error message!");
-                            break;
-                        case MessageType.ACK:
-                            //TODO: Handle ack messages
-                            Console.WriteLine($"Received ACK message!");
-                            OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Received ACK message!");
-                            break;
-                        case MessageType.ControlCommand:
-                            if (expectedPayloadLength == Marshal.SizeOf(typeof(ControlCommand)))
-                            {
-                                ControlCommand controlCommand = DeserializeStruct<ControlCommand>(result.Buffer, headerSize);
-                                Console.WriteLine($"Received ControlCommand from {sender}: Direction = {controlCommand.Direction}, Speed = {controlCommand.Speed}, Stop = {controlCommand.Stop}");
+                        // Handle the payload based on message type
+                        switch ((MessageType)receivedHeader.MessageType)
+                        {
+                            case MessageType.ERR:
+                                //TODO: Handle error messages
+                                Console.WriteLine($"Received error message!");
+                                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Received error message!");
+                                break;
+                            case MessageType.ACK:
+                                //TODO: Handle ack messages
+                                Console.WriteLine($"Received ACK message!");
+                                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Received ACK message!");
+                                break;
+                            case MessageType.ControlCommand:
+                                if (expectedPayloadLength == Marshal.SizeOf(typeof(ControlCommand)))
+                                {
+                                    ControlCommand controlCommand = DeserializeStruct<ControlCommand>(result.Buffer, headerSize);
+                                    Console.WriteLine($"Received ControlCommand from {sender}: Direction = {controlCommand.Direction}, Speed = {controlCommand.Speed}, Stop = {controlCommand.Stop}");
 
-                                // Notify UI
-                                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {controlCommand.Direction}, Speed = {controlCommand.Speed}, Stop = {controlCommand.Stop}");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Invalid size for ControlCommand received from {sender}. Expected size: {Marshal.SizeOf(typeof(ControlCommand))}");
-                            }
-                            break;
+                                    // Notify UI
+                                    OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - Direction = {controlCommand.Direction}, Speed = {controlCommand.Speed}, Stop = {controlCommand.Stop}");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Invalid size for ControlCommand received from {sender}. Expected size: {Marshal.SizeOf(typeof(ControlCommand))}");
+                                }
+                                break;
 
-                        case MessageType.MoveToCommand:
-                            if (expectedPayloadLength == Marshal.SizeOf(typeof(MoveToCommand)))
-                            {
-                                MoveToCommand moveToCommand = DeserializeStruct<MoveToCommand>(result.Buffer, headerSize);
-                                Console.WriteLine($"Received MoveToCommand from {sender}: X = {moveToCommand.x}, Y = {moveToCommand.y}");
+                            case MessageType.MoveToCommand:
+                                if (expectedPayloadLength == Marshal.SizeOf(typeof(MoveToCommand)))
+                                {
+                                    MoveToCommand moveToCommand = DeserializeStruct<MoveToCommand>(result.Buffer, headerSize);
+                                    Console.WriteLine($"Received MoveToCommand from {sender}: X = {moveToCommand.x}, Y = {moveToCommand.y}");
 
-                                // Notify UI
-                                OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - X = {moveToCommand.x}, Y = {moveToCommand.y}");
-                            }
-                            else
-                            {
-                                Console.WriteLine($"Invalid size for MoveToCommand received from {sender}. Expected size: {Marshal.SizeOf(typeof(MoveToCommand))}");
-                            }
-                            break;
+                                    // Notify UI
+                                    OnMessageReceived?.Invoke($"From {sender.Address}:{sender.Port} - X = {moveToCommand.x}, Y = {moveToCommand.y}");
+                                }
+                                else
+                                {
+                                    Console.WriteLine($"Invalid size for MoveToCommand received from {sender}. Expected size: {Marshal.SizeOf(typeof(MoveToCommand))}");
+                                }
+                                break;
 
-                        default:
-                            Console.WriteLine($"Unknown message type received from {sender}: {receivedHeader.MessageType}");
-                            break;
+                            default:
+                                Console.WriteLine($"Unknown message type received from {sender}: {receivedHeader.MessageType}");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Payload length mismatch: expected {expectedPayloadLength}, but got {actualPayloadLength}");
                     }
                 }
                 else
                 {
-                    Console.WriteLine($"Payload length mismatch: expected {expectedPayloadLength}, but got {actualPayloadLength}");
+                    Console.WriteLine("Ignoring packet with sequence number " + receivedHeader.SequenceNumber + ", last received sequence number " + LastReceivedSequenceNumber);
                 }
             }
             else
@@ -128,6 +141,24 @@ public class UdpCommunicationService
                 Console.WriteLine($"Received an invalid packet of size {result.Buffer.Length} from {sender}");
             }
         }
+    }
+
+    bool IsSequenceNumberValid(byte sequenceNumber)
+    {
+        // If the new sequence number is greater than the last one, it's valid
+        if (sequenceNumber > LastReceivedSequenceNumber)
+        {
+            return true;
+        }
+
+        // Special case for wraparound
+        if (LastReceivedSequenceNumber >= 245 && sequenceNumber <= 10)
+        {
+            return true; // Accept wraparound from >=245 to <=10..?
+        }
+
+        // Otherwise, ignore the packet
+        return false;
     }
 
     public async Task SendDataToEspDevices<T>(MessageType type, T packet, HashSet<Flag>? flags = null) where T : struct
@@ -139,6 +170,7 @@ public class UdpCommunicationService
             VersionNumber = 1,
             MessageType = (byte)type,
             Flags = byte.MinValue,
+            SequenceNumber = SequenceNumber++,
             Length = (byte)payloadSize,
         };
 
@@ -167,6 +199,7 @@ public class UdpCommunicationService
             VersionNumber = 1,
             MessageType = (byte)type,
             Flags = byte.MinValue,
+            SequenceNumber = SequenceNumber++,
             Length = 0,
         };
 

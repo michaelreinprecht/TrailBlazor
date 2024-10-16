@@ -7,6 +7,7 @@ namespace TrailBlazorServerApp.Data
     {
         public byte VersionNumber;  // Version of the protocol
         public byte MessageType;    // Type of message (e.g., ControlCommand, MoveToCommand)
+        public byte SequenceNumber;
         public byte Length;
         public uint Flags;
 
