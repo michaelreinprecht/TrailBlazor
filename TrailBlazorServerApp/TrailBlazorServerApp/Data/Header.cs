@@ -8,25 +8,27 @@ namespace TrailBlazorServerApp.Data
         public byte VersionNumber;  // Version of the protocol
         public byte MessageType;    // Type of message (e.g., ControlCommand, MoveToCommand)
         public byte Length;
-        public byte Flags;
+        public uint Flags;
 
-        // Method to set the ACK flag in the Flags field
-        public void SetAckFlag(bool ack)
+        public void SetFlag(Flag flag)
         {
-            if (ack)
+            if (!IsFlagSet(flag))
             {
-                Flags |= (byte)1 << 0; // Set bit 0 to 1
-            }
-            else
-            {
-                Flags &= unchecked((byte)~(1 << 0)); // Clear bit 0
+                Flags |= (uint)flag;
             }
         }
 
-        // Method to check if the ACK flag is set
-        public bool IsAckFlagSet()
+        public void ClearFlag(Flag flag)
         {
-            return (Flags & (1 << 0)) != 0; // Check if bit 0 is set
+            if (IsFlagSet(flag))
+            {
+                Flags &= unchecked((uint)~flag);
+            }
+        }
+
+        public bool IsFlagSet(Flag flag)
+        {
+            return (Flags & (uint)flag) != 0;
         }
     }
 }

@@ -58,7 +58,7 @@ public class UdpCommunicationService
                 Console.WriteLine($"Received header: Version = {receivedHeader.VersionNumber}, Message Type = {receivedHeader.MessageType}, Flags = {receivedHeader.Flags}");
 
                 // If an ACK_FLAG is set, send an acknowledgment response, but never send an ACK for an ACK
-                if (receivedHeader.IsAckFlagSet() && receivedHeader.MessageType != (byte)MessageType.ACK)
+                if (receivedHeader.IsFlagSet(Flag.ACK_Flag) && receivedHeader.MessageType != (byte)MessageType.ACK)
                 {
                     Console.WriteLine("ACK flag set, sending acknowledgment response");
                     await SendAck(sender, receivedHeader.VersionNumber);
@@ -130,7 +130,7 @@ public class UdpCommunicationService
         }
     }
 
-    public async Task SendDataToEspDevices<T>(MessageType type, T packet, bool ack_flag = false) where T : struct
+    public async Task SendDataToEspDevices<T>(MessageType type, T packet, HashSet<Flag>? flags = null) where T : struct
     {
         int payloadSize = Marshal.SizeOf(typeof(T));
 
@@ -141,7 +141,14 @@ public class UdpCommunicationService
             Flags = byte.MinValue,
             Length = (byte)payloadSize,
         };
-        header.SetAckFlag(ack_flag);
+
+        //Set flags
+        if (flags != null)
+        {
+            foreach(Flag flag in flags) {
+                header.SetFlag(flag);
+            }
+        }
 
         //Serialize header and packet
         byte[] packetBytes = SerializePacket(header, packet);
@@ -153,7 +160,7 @@ public class UdpCommunicationService
         }
     }
 
-    public async Task SendDataToEspDevices(MessageType type, bool ack_flag = false)
+    public async Task SendDataToEspDevices(MessageType type, HashSet<Flag>? flags = null)
     {
         Header header = new Header
         {
@@ -162,7 +169,15 @@ public class UdpCommunicationService
             Flags = byte.MinValue,
             Length = 0,
         };
-        header.SetAckFlag(ack_flag);
+
+        //Set flags
+        if (flags != null)
+        {
+            foreach (Flag flag in flags)
+            {
+                header.SetFlag(flag);
+            }
+        }
 
         //Serialize header and packet
         byte[] packetBytes = SerializePacket(header);

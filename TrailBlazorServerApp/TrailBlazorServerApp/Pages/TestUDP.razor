@@ -102,13 +102,13 @@
         // Convert the checkbox value to 0 or 1
         controlCommand.Stop = (byte)(isStopChecked ? 1 : 0);
 
-        await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, true);
+        await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, new HashSet<Flag>() { Flag.ACK_Flag });
         statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {controlCommand.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
     }
 
     private async Task SendLocationData()
     {
-        await UdpService.SendDataToEspDevices(MessageType.MoveToCommand, moveToCommand, true);
+        await UdpService.SendDataToEspDevices(MessageType.MoveToCommand, moveToCommand, new HashSet<Flag>() { Flag.ACK_Flag });
         statusMessage = $"Sent Location Data: X = {moveToCommand.x}, Y = {moveToCommand.y}";
     }
 
