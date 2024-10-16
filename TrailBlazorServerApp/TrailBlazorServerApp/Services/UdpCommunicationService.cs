@@ -10,7 +10,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 public class UdpCommunicationService
 {
     public static byte SequenceNumber { get; set; }
-    private byte LastReceivedSequenceNumber { get; set; }
+    private byte LastReceivedSequenceNumber { get; set; } = byte.MaxValue;
 
     private readonly List<IPEndPoint> _esp32Devices = new()
     {
