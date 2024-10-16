@@ -76,6 +76,8 @@ public class UdpCommunicationService
 
                 if (IsSequenceNumberValid(receivedHeader.SequenceNumber))
                 {
+                    LastReceivedSequenceNumber = receivedHeader.SequenceNumber;
+
                     if (actualPayloadLength == expectedPayloadLength)
                     {
                         // Handle the payload based on message type
