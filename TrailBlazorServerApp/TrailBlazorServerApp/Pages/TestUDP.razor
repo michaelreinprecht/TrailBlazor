@@ -77,7 +77,7 @@
         try
         {
             // Call the method to send an ACK message directly
-            await UdpService.SendDataToEspDevices(MessageType.ACK, Flags.NACK_FLAG);
+            await UdpService.SendDataToEspDevices(MessageType.ACK);
             statusMessage = "ACK message sent successfully.";
         }
         catch (Exception ex)
@@ -102,13 +102,13 @@
         // Convert the checkbox value to 0 or 1
         controlCommand.Stop = (byte)(isStopChecked ? 1 : 0);
 
-        await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, Flags.ACK_FLAG);
+        await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, true);
         statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {controlCommand.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
     }
 
     private async Task SendLocationData()
     {
-        await UdpService.SendDataToEspDevices(MessageType.MoveToCommand, moveToCommand, Flags.ACK_FLAG);
+        await UdpService.SendDataToEspDevices(MessageType.MoveToCommand, moveToCommand, true);
         statusMessage = $"Sent Location Data: X = {moveToCommand.x}, Y = {moveToCommand.y}";
     }
 

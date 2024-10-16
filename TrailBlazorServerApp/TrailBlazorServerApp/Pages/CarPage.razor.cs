@@ -78,7 +78,7 @@ namespace TrailBlazorServerApp.Pages
 
             if (UdpService != null)
             {
-                await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, Flags.ACK_FLAG);
+                await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, true);
                 statusMessage = $"Sent Command: Direction = {direction}, Speed = {controlCommand.Speed}, Stop = {(stop ? "True" : "False")}";
                 StateHasChanged(); // Refresh the UI to reflect the latest status message
             }

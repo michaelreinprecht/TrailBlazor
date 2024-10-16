@@ -31,7 +31,7 @@ public class UdpCommunicationService
         {
             VersionNumber = versionNumber, // Use the same version number as the received packet
             MessageType = (byte)MessageType.ACK, // ACK message type
-            Flags = (byte)Flags.NACK_FLAG, // No need for further ACKs
+            Flags = byte.MinValue, // No need for further ACKs
             Length = 0 // No payload for ACK
         };
 
@@ -58,7 +58,7 @@ public class UdpCommunicationService
                 Console.WriteLine($"Received header: Version = {receivedHeader.VersionNumber}, Message Type = {receivedHeader.MessageType}, Flags = {receivedHeader.Flags}");
 
                 // If an ACK_FLAG is set, send an acknowledgment response, but never send an ACK for an ACK
-                if (receivedHeader.Flags == (byte)Flags.ACK_FLAG && receivedHeader.MessageType != (byte)MessageType.ACK)
+                if (receivedHeader.IsAckFlagSet() && receivedHeader.MessageType != (byte)MessageType.ACK)
                 {
                     Console.WriteLine("ACK flag set, sending acknowledgment response");
                     await SendAck(sender, receivedHeader.VersionNumber);
@@ -130,7 +130,7 @@ public class UdpCommunicationService
         }
     }
 
-    public async Task SendDataToEspDevices<T>(MessageType type, T packet, Flags flags = Flags.NACK_FLAG) where T : struct
+    public async Task SendDataToEspDevices<T>(MessageType type, T packet, bool ack_flag = false) where T : struct
     {
         int payloadSize = Marshal.SizeOf(typeof(T));
 
@@ -138,9 +138,10 @@ public class UdpCommunicationService
         {
             VersionNumber = 1,
             MessageType = (byte)type,
-            Flags = (byte)flags, //Currently just always expect and ACK ...
+            Flags = byte.MinValue,
             Length = (byte)payloadSize,
         };
+        header.SetAckFlag(ack_flag);
 
         //Serialize header and packet
         byte[] packetBytes = SerializePacket(header, packet);
@@ -152,15 +153,16 @@ public class UdpCommunicationService
         }
     }
 
-    public async Task SendDataToEspDevices(MessageType type, Flags flags = Flags.NACK_FLAG)
+    public async Task SendDataToEspDevices(MessageType type, bool ack_flag = false)
     {
         Header header = new Header
         {
             VersionNumber = 1,
             MessageType = (byte)type,
-            Flags = (byte)flags, //Currently just always expect and ACK ...
+            Flags = byte.MinValue,
             Length = 0,
         };
+        header.SetAckFlag(ack_flag);
 
         //Serialize header and packet
         byte[] packetBytes = SerializePacket(header);
