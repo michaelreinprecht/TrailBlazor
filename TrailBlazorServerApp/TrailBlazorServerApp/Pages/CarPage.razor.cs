@@ -18,7 +18,6 @@ namespace TrailBlazorServerApp.Pages
         private string downArrowColor = "black";
         private string rightArrowColor = "black";
 
-        // Timer to call SendCommandToESP every 500ms
         private System.Timers.Timer? udpSendTimer;
         private string statusMessage = "";
         private List<string> receivedMessages = new();
@@ -136,7 +135,7 @@ namespace TrailBlazorServerApp.Pages
         // Initialize the timer and start calling SendCommandToESP every 500ms
         private void StartTimer()
         {
-            udpSendTimer = new Timer(500); // 500ms interval
+            udpSendTimer = new Timer(200); // 200ms interval
             udpSendTimer.Elapsed += OnTimerElapsed; // Hook up the event handler
             udpSendTimer.AutoReset = true; // Restart the timer after each interval
             udpSendTimer.Enabled = true; // Enable the timer

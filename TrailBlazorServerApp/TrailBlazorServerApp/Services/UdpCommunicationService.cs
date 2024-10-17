@@ -58,7 +58,7 @@ public class UdpCommunicationService
             {
                 // Deserialize the header
                 Header receivedHeader = DeserializeStruct<Header>(result.Buffer, 0);
-                Console.WriteLine($"Received header: Version = {receivedHeader.VersionNumber}, Message Type = {receivedHeader.MessageType}, Flags = {receivedHeader.Flags}");
+                Console.WriteLine($"Received header: Version = {receivedHeader.VersionNumber}, Message Type = {receivedHeader.MessageType}, Flags = {receivedHeader.Flags}, SequenceNumber = {receivedHeader.SequenceNumber}");
 
                 // If an ACK_FLAG is set, send an acknowledgment response, but never send an ACK for an ACK
                 if (receivedHeader.IsFlagSet(Flag.ACK_Flag) && receivedHeader.MessageType != (byte)MessageType.ACK)
