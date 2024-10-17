@@ -1,16 +1,13 @@
-﻿using System.Collections.Generic;
-using System.Data;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
-using System.Text;
 using TrailBlazorServerApp.Data;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class UdpCommunicationService
 {
     public static byte SequenceNumber { get; set; }
     private byte LastReceivedSequenceNumber { get; set; } = byte.MaxValue;
+    private bool IsFirstPacket { get; set; } = true;
 
     private readonly List<IPEndPoint> _esp32Devices = new()
     {
@@ -147,18 +144,21 @@ public class UdpCommunicationService
 
     bool IsSequenceNumberValid(byte sequenceNumber)
     {
+        if (IsFirstPacket)
+        {
+            IsFirstPacket = false;
+            return true;
+        }
         // If the new sequence number is greater than the last one, it's valid
         if (sequenceNumber > LastReceivedSequenceNumber)
         {
             return true;
         }
-
         // Special case for wraparound
         if (LastReceivedSequenceNumber >= 245 && sequenceNumber <= 10)
         {
             return true; // Accept wraparound from >=245 to <=10..?
         }
-
         // Otherwise, ignore the packet
         return false;
     }
