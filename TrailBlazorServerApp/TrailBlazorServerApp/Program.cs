@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using TrailBlazorServerApp.Data;
-using TrailBlazorServerApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

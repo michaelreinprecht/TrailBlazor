@@ -4,9 +4,9 @@ using TrailBlazorServerApp.Data;
 
 public class AppProtocolService
 {
-    private byte LastReceivedSequenceNumber { get; set; } = byte.MaxValue;
+    private static byte LastReceivedSequenceNumber { get; set; } = byte.MaxValue;
+    public static byte SequenceNumber { get; set; } = byte.MinValue;
     private bool IsFirstPacket { get; set; } = true;
-    public static byte SequenceNumber { get; set; }
 
     private readonly UdpCommunicationService _udpService;
     private readonly List<IPEndPoint> _esp32Devices = new()
