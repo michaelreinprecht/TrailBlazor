@@ -1,1 +1,36 @@
-﻿
+﻿/* Styling for arrows */
+.arrow {
+    width: 15vh;
+    height: 15vh;
+    margin: 1vh;
+    border-radius: 10px;
+    background-color: black;
+    cursor: pointer;
+    position: relative; /* Ensure absolute positioning of the image works correctly */
+}
+
+.arrow-img {
+    width: 60%; /* Adjust size as needed */
+    height: 60%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Rotations for the image itself, not the arrow div */
+.up-img {
+    transform: translate(-50%, -50%) rotate(90deg); /* Rotate 270deg for up */
+}
+
+.left-img {
+    transform: translate(-50%, -50%) rotate(0deg); /* Rotate 180deg for left */
+}
+
+.down-img {
+    transform: translate(-50%, -50%) rotate(270deg); /* Rotate 90deg for down */
+}
+
+.right-img {
+    transform: translate(-50%, -50%) rotate(180deg);
+}
