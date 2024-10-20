@@ -1,5 +1,5 @@
-﻿@* @page "/test"
-@inject UdpCommunicationService UdpService
+﻿@page "/test"
+@inject AppProtocolService ProtocolService
 @implements IDisposable
 @using TrailBlazorServerApp.Data
 
@@ -77,7 +77,7 @@
         try
         {
             // Call the method to send an ACK message directly
-            await UdpService.SendDataToEspDevices(MessageType.ACK);
+            await ProtocolService.SendProtocolMessage(MessageType.ACK);
             statusMessage = "ACK message sent successfully.";
         }
         catch (Exception ex)
@@ -102,13 +102,13 @@
         // Convert the checkbox value to 0 or 1
         controlCommand.Stop = (byte)(isStopChecked ? 1 : 0);
 
-        await UdpService.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, new HashSet<Flag>() { Flag.ACK_Flag });
+        await ProtocolService.SendProtocolMessage(MessageType.ControlCommand, controlCommand, new HashSet<Flag>() { Flag.ACK_Flag });
         statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {controlCommand.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
     }
 
     private async Task SendLocationData()
     {
-        await UdpService.SendDataToEspDevices(MessageType.MoveToCommand, moveToCommand, new HashSet<Flag>() { Flag.ACK_Flag });
+        await ProtocolService.SendProtocolMessage(MessageType.MoveToCommand, moveToCommand, new HashSet<Flag>() { Flag.ACK_Flag });
         statusMessage = $"Sent Location Data: X = {moveToCommand.x}, Y = {moveToCommand.y}";
     }
 
@@ -136,191 +136,28 @@
         InvokeAsync(StateHasChanged); // Update the UI
     }
 
-    // Unsubscribe from the event when the component is disposed
-    public void Dispose()
-    {
-        UdpService.OnMessageReceived -= HandleMessageReceived;
-    }
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
-        InitUdpService();
+        InitProtocolService();
     }
 
-    private async void InitUdpService() {
-        if (UdpService != null)
+    private async void InitProtocolService() {
+        if (ProtocolService != null)
         {
-            UdpService.OnMessageReceived += HandleMessageReceived; // Subscribe to the event
+            ProtocolService.OnMessageReceived += HandleMessageReceived; // Subscribe to the event
             var cancellationToken = new CancellationTokenSource().Token;
-            await UdpService.StartListeningForResponses(cancellationToken);
+            await ProtocolService.StartListening(cancellationToken);
         }
         else
         {
             Console.WriteLine("UdpService is null! Make sure it's injected correctly.");
         }
     }
-}
- *@
-
-        @page "/test"
-@inject ProtocolHandler ProtocolHandler
-@implements IDisposable
-@using System.Net
-@using TrailBlazorServerApp.Data
-
-<h3>Send Command to ESP32C3 Devices</h3>
-
-<div>
-    <button @onclick="SendAckMessage">Send ACK Message</button>
-</div>
-
-<div>
-    <label>Select Command Type:</label>
-    <select value="@selectedCommandType" @onchange="OnCommandTypeChange">
-        <option value="Command">Command</option>
-        <option value="LocationData">Location Data</option>
-    </select>
-</div>
-
-<div>
-    @if (selectedCommandType == "Command")
-    {
-        <div>
-            <label>Direction (character):</label>
-            <input @bind="directionInput" maxlength="1" />
-        </div>
-        <div>
-            <label>Speed:</label>
-            <input type="number" @bind="controlCommand.Speed" min="1" max="10" placeholder="10" />
-        </div>
-        <div>
-            <label>Stop:</label>
-            <input type="checkbox" @bind="isStopChecked" />
-        </div>
-        <button @onclick="SendCommand">Send to ESP Devices</button>
-    }
-    else if (selectedCommandType == "LocationData")
-    {
-        <div>
-            <label>X:</label>
-            <input type="number" @bind="moveToCommand.x" />
-        </div>
-        <div>
-            <label>Y:</label>
-            <input type="number" @bind="moveToCommand.y" />
-        </div>
-        <button @onclick="SendLocationData">Send Location Data to ESP Devices</button>
-    }
-</div>
-
-<p>@statusMessage</p>
-
-<h4>Responses from ESP Devices</h4>
-<ul>
-    @foreach (var response in receivedMessages)
-    {
-        <li>@response</li>
-    }
-</ul>
-
-@code {
-    private ControlCommand controlCommand = new ControlCommand();
-    private MoveToCommand moveToCommand = new MoveToCommand();
-    private string statusMessage = "Ready";
-    private List<string> receivedMessages = new(); // Store received messages
-
-    // Temp variables for input handling
-    private string directionInput = "";
-    private bool isStopChecked;
-
-    // Selected command type
-    private string selectedCommandType = "Command";
-
-    private async Task SendAckMessage()
-    {
-        statusMessage = "Sending ACK message...";
-        try
-        {
-            // Call the method to send an ACK message directly
-            await ProtocolHandler.SendAck(new IPEndPoint(IPAddress.Parse("192.168.4.100"), 4444), 1); // Sending ACK as an example
-            statusMessage = "ACK message sent successfully.";
-        }
-        catch (Exception ex)
-        {
-            statusMessage = $"Error sending ACK message: {ex.Message}";
-        }
-    }
-
-    private async Task SendCommand()
-    {
-        if (!string.IsNullOrEmpty(directionInput) && directionInput.Length == 1)
-        {
-            controlCommand.Direction = (byte)directionInput[0]; // ASCII value of the character
-        }
-        else
-        {
-            statusMessage = "Please enter a valid direction (L, R, F, B).";
-            return;
-        }
-
-        controlCommand.Stop = (byte)(isStopChecked ? 1 : 0);
-
-        await ProtocolHandler.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, new HashSet<Flag>() { Flag.ACK_Flag });
-        statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {controlCommand.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
-    }
-
-    private async Task SendLocationData()
-    {
-        // await ProtocolHandler.SendMoveToCommandAsync(moveToCommand);
-        statusMessage = $"Sent Location Data: X = {moveToCommand.x}, Y = {moveToCommand.y}";
-    }
-
-    private void OnCommandTypeChange(ChangeEventArgs e)
-    {
-        selectedCommandType = e.Value.ToString();
-        // Reset inputs when switching types
-        if (selectedCommandType == "Command")
-        {
-            controlCommand.Speed = 10;
-            directionInput = "";
-            isStopChecked = false;
-        }
-        else if (selectedCommandType == "LocationData")
-        {
-            moveToCommand.x = 0;
-            moveToCommand.y = 0;
-        }
-    }
-
-    private void HandleMessageReceived(string message)
-    {
-        Console.WriteLine($"Received message: {message}"); // Log the message for debugging
-        receivedMessages.Add(message);
-        InvokeAsync(StateHasChanged); // Update the UI
-    }
 
     // Unsubscribe from the event when the component is disposed
     public void Dispose()
     {
-        ProtocolHandler.OnMessageReceived -= HandleMessageReceived;
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        InitProtocolHandler();
-    }
-
-    private void InitProtocolHandler()
-    {
-        if (ProtocolHandler != null)
-        {
-            ProtocolHandler.OnMessageReceived += HandleMessageReceived; // Subscribe to the event
-        }
-        else
-        {
-            Console.WriteLine("ProtocolHandler is null! Make sure it's injected correctly.");
-        }
+        ProtocolService.OnMessageReceived -= HandleMessageReceived;
     }
 }

@@ -179,7 +179,8 @@
 //        //Set flags
 //        if (flags != null)
 //        {
-//            foreach(Flag flag in flags) {
+//            foreach (Flag flag in flags)
+//            {
 //                header.SetFlag(flag);
 //            }
 //        }
@@ -294,36 +295,38 @@
 //}
 
 
-
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 
 public class UdpCommunicationService
 {
-    private const int ListeningPort = 3333;
     private readonly UdpClient _udpClient;
+    private const int ListeningPort = 3333; // Port to listen for ESP responses
 
-    public event Action<IPEndPoint, byte[]>? OnPacketReceived; // Event to notify when a packet is received
+    public event Action<IPEndPoint, byte[]>? OnDataReceived; // Event to notify when raw data is received
 
     public UdpCommunicationService()
     {
         _udpClient = new UdpClient(ListeningPort);
     }
 
-    // Method to send a byte array packet to a specified endpoint
-    public async Task SendPacketAsync(byte[] packetData, IPEndPoint destination)
+    // Start listening for incoming data packets
+    public async Task StartListening(CancellationToken cancellationToken)
     {
-        await _udpClient.SendAsync(packetData, packetData.Length, destination);
-    }
+        Console.WriteLine("UDP service is listening for data...");
 
-    // Start listening for incoming UDP packets
-    public async Task StartListeningAsync(CancellationToken cancellationToken)
-    {
         while (!cancellationToken.IsCancellationRequested)
         {
             var result = await _udpClient.ReceiveAsync();
-            OnPacketReceived?.Invoke(result.RemoteEndPoint, result.Buffer);
+            OnDataReceived?.Invoke(result.RemoteEndPoint, result.Buffer); // Notify subscribers with the raw data
         }
     }
+
+    // Send raw data to a specified endpoint
+    public async Task SendDataAsync(byte[] data, IPEndPoint endpoint)
+    {
+        await _udpClient.SendAsync(data, data.Length, endpoint);
+        Console.WriteLine($"Data sent to {endpoint.Address}:{endpoint.Port}");
+    }
 }
+

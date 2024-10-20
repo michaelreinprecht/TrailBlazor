@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using TrailBlazorServerApp.Data;
+using TrailBlazorServerApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,13 +11,8 @@ builder.Services.AddServerSideBlazor();
 
 // Register UdpCommunicationService
 builder.Services.AddSingleton<UdpCommunicationService>();
+builder.Services.AddSingleton<AppProtocolService>();
 
-// Register ProtocolHandler and ensure it gets UdpCommunicationService injected
-builder.Services.AddSingleton<ProtocolHandler>(provider =>
-{
-    var udpService = provider.GetRequiredService<UdpCommunicationService>();
-    return new ProtocolHandler(udpService);
-});
 
 var app = builder.Build();
 
