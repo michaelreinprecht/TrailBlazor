@@ -11,6 +11,13 @@ builder.Services.AddServerSideBlazor();
 // Register UdpCommunicationService
 builder.Services.AddSingleton<UdpCommunicationService>();
 
+// Register ProtocolHandler and ensure it gets UdpCommunicationService injected
+builder.Services.AddSingleton<ProtocolHandler>(provider =>
+{
+    var udpService = provider.GetRequiredService<UdpCommunicationService>();
+    return new ProtocolHandler(udpService);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
