@@ -1,4 +1,4 @@
-﻿@page "/car/{carID:int}"
+﻿@* @page "/car/{carID:int}"
 @inject UdpCommunicationService UdpService
 
 <div class="container text-center" tabindex="0" @ref="arrowContainer" @onkeydown="HandleKeyDown" @onkeyup="HandleKeyUp">
@@ -101,3 +101,4 @@
         transform: translate(-50%, -50%) rotate(180deg);
     }
 </style>
+ *@

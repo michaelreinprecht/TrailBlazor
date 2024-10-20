@@ -100,6 +100,68 @@ public class ProtocolHandler
         return sequenceNumber > LastReceivedSequenceNumber || (LastReceivedSequenceNumber >= 245 && sequenceNumber <= 10);
     }
 
+    public async Task SendDataToEspDevices<T>(MessageType type, T packet, HashSet<Flag>? flags = null) where T : struct
+    {
+        int payloadSize = Marshal.SizeOf(typeof(T));
+
+        Header header = new Header
+        {
+            VersionNumber = 1,
+            MessageType = (byte)type,
+            Flags = byte.MinValue,
+            SequenceNumber = SequenceNumber++,
+            Length = (byte)payloadSize,
+        };
+
+        //Set flags
+        if (flags != null)
+        {
+            foreach (Flag flag in flags)
+            {
+                header.SetFlag(flag);
+            }
+        }
+
+        //Serialize header and packet
+        byte[] packetBytes = SerializeStruct(header).Concat(SerializeStruct(packet)).ToArray();
+
+        foreach (var deviceEndpoint in _esp32Devices)
+        {
+            await _udpService.SendPacketAsync(packetBytes, deviceEndpoint);
+            Console.WriteLine($"Command of type {type} sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
+        }
+    }
+
+    //public async Task SendDataToEspDevices(MessageType type, HashSet<Flag>? flags = null)
+    //{
+    //    Header header = new Header
+    //    {
+    //        VersionNumber = 1,
+    //        MessageType = (byte)type,
+    //        Flags = byte.MinValue,
+    //        SequenceNumber = SequenceNumber++,
+    //        Length = 0,
+    //    };
+
+    //    //Set flags
+    //    if (flags != null)
+    //    {
+    //        foreach (Flag flag in flags)
+    //        {
+    //            header.SetFlag(flag);
+    //        }
+    //    }
+
+    //    //Serialize header and packet
+    //    byte[] packetBytes = SerializeStruct(header);
+
+    //    foreach (var deviceEndpoint in _esp32Devices)
+    //    {
+    //        await _udpClient.SendAsync(packetBytes, packetBytes.Length, deviceEndpoint);  // Send the packet over UDP
+    //        Console.WriteLine($"Command of type {type} sent to {deviceEndpoint.Address}:{deviceEndpoint.Port}");
+    //    }
+    //}
+
     public async Task SendControlCommandAsync(ControlCommand command)
     {
         Header header = new Header

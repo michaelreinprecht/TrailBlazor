@@ -266,7 +266,7 @@
 
         controlCommand.Stop = (byte)(isStopChecked ? 1 : 0);
 
-        await ProtocolHandler.SendControlCommandAsync(controlCommand);
+        await ProtocolHandler.SendDataToEspDevices(MessageType.ControlCommand, controlCommand, new HashSet<Flag>() { Flag.ACK_Flag });
         statusMessage = $"Sent Command: Direction = {directionInput}, Speed = {controlCommand.Speed}, Stop = {(isStopChecked ? "True" : "False")}";
     }
 
