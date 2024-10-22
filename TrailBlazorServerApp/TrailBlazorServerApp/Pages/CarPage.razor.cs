@@ -28,6 +28,9 @@ namespace TrailBlazorServerApp.Pages
         // A set to keep track of currently pressed keys
         private HashSet<string> pressedKeys = new();
 
+        private bool isMobile = false;
+        private bool isGasHeld = false;
+
         [Inject]
         private IJSRuntime? JSRuntime { get; set; }
 
@@ -49,6 +52,16 @@ namespace TrailBlazorServerApp.Pages
 
             // Update the colors of the arrows based on currently pressed keys
             UpdateArrowColors();
+        }
+
+        private void OnGasPressed()
+        {
+            isGasHeld = true;
+        }
+
+        private void OnGasReleased()
+        {
+            isGasHeld = false;
         }
 
         // This method updates the colors of the arrows based on which keys are pressed
@@ -110,26 +123,32 @@ namespace TrailBlazorServerApp.Pages
                 right = false;
             }
 
+            //On Mobile the gas button has to be held for the car to move.
+            if (isMobile && !isGasHeld)
+            {
+                return '0';
+            }
+
             // Determine the direction based on the active keys
             if (up && right)
-                return 'B'; // Up-Right
+                return '2'; // Up-Right
             if (down && right)
-                return 'D'; // Down-Right
+                return '4'; // Down-Right
             if (down && left)
-                return 'F'; // Down-Left
+                return '6'; // Down-Left
             if (up && left)
-                return 'H'; // Up-Left
+                return '8'; // Up-Left
 
             if (up)
-                return 'A'; // Forward
+                return '1'; // Forward
             if (right)
-                return 'C'; // Right
+                return '3'; // Right
             if (down)
-                return 'E'; // Down
+                return '5'; // Down
             if (left)
-                return 'G'; // Left
+                return '7'; // Left
 
-            return 'X'; // No direction or opposing directions cancel each other out
+            return '0'; // No direction or opposing directions cancel each other out
         }
 
         // Initialize the timer and start calling SendCommandToESP every 500ms
@@ -202,6 +221,9 @@ namespace TrailBlazorServerApp.Pages
         {
             if (firstRender)
             {
+                await AdaptToDeviceType();
+
+
                 // Set focus on the container div so it can capture key presses
                 await arrowContainer.FocusAsync();
 
@@ -235,6 +257,16 @@ namespace TrailBlazorServerApp.Pages
 
                 // Start the timer after everything is initialized
                 StartTimer();
+            }
+        }
+
+        private async Task AdaptToDeviceType()
+        {
+            var deviceType = await JSRuntime.InvokeAsync<string>("deviceHelper.getDeviceType");
+
+            if (deviceType == "mobile")
+            {
+                isMobile = true;
             }
         }
 

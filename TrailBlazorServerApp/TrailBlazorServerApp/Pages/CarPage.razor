@@ -46,6 +46,12 @@
         </div>
     </div>
 </div>
+@if (isMobile)
+{
+    <button class="gas-btn"
+    @ontouchstart="OnGasPressed"
+    @ontouchend="OnGasReleased"/>
+}
 
 <p>@statusMessage</p>
 <h4>Responses from ESP Devices</h4>

@@ -23,7 +23,7 @@ namespace TrailBlazorServerApp.Data
         {
             if (IsFlagSet(flag))
             {
-                Flags &= unchecked((uint)~flag);
+                Flags &= ((uint)~flag);
             }
         }
 

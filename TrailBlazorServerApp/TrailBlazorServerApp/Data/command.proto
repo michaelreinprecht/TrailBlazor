@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-message Command {
-    string direction = 1;  // Field 1: A string for the direction (e.g., "A")
-    int32 stop = 2;        // Field 2: An integer for the stop command
-    bool stop_bool = 3;    // Field 3: A boolean for the stop flag
-}

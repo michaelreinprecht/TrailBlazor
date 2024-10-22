@@ -72,9 +72,10 @@ public class AppProtocolService
             return true;
         }
         // Special case for wraparound
-        if (LastReceivedSequenceNumber >= 245 && sequenceNumber <= 10)
+        byte distance = (byte)(LastReceivedSequenceNumber - sequenceNumber);
+        if (distance < 127)
         {
-            return true; // Accept wraparound from >=245 to <=10..?
+            return true;
         }
         // Otherwise, ignore the packet
         return false;

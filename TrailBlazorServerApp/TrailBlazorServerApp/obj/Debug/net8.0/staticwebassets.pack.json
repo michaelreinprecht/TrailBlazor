@@ -61,6 +61,14 @@
       "PackagePath": "staticwebassets\\images\\arrow.png"
     },
     {
+      "Id": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\images\\gas.png",
+      "PackagePath": "staticwebassets\\images\\gas.png"
+    },
+    {
+      "Id": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\js\\deviceInfo.js",
+      "PackagePath": "staticwebassets\\js\\deviceInfo.js"
+    },
+    {
       "Id": "C:\\Users\\Zechs\\Documents\\FHV\\5. Semester\\Microprocessors\\TrailBlazor\\TrailBlazorServerApp\\TrailBlazorServerApp\\wwwroot\\js\\deviceTilt.js",
       "PackagePath": "staticwebassets\\js\\deviceTilt.js"
     },
