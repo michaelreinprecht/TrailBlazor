@@ -62,7 +62,6 @@ C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazor\TrailBlazor
 C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazor\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\staticwebassets.pack.json
 C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazor\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\scopedcss\Pages\MainPage.razor.rz.scp.css
 C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazor\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\scopedcss\Shared\MainLayout.razor.rz.scp.css
-C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazor\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\scopedcss\Shared\NavMenu.razor.rz.scp.css
 C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazor\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\scopedcss\bundle\TrailBlazorServerApp.styles.css
 C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazor\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\scopedcss\projectbundle\TrailBlazorServerApp.bundle.scp.css
 C:\Users\Zechs\Documents\FHV\5. Semester\Microprocessors\TrailBlazor\TrailBlazorServerApp\TrailBlazorServerApp\obj\Debug\net8.0\TrailBlazorServerApp.csproj.CopyComplete

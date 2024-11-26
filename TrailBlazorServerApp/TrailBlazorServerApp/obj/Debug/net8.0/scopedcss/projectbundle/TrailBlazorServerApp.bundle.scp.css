@@ -1,81 +1,81 @@
 /* _content/TrailBlazorServerApp/Pages/CarPage.razor.rz.scp.css */
 /* Styling for arrows */
-.arrow[b-6svwu9dsdr] {
+/*.arrow {
     width: 15vh;
     height: 15vh;
     margin: 1vh;
     border-radius: 10px;
     background-color: black;
     cursor: pointer;
-    position: relative; /* Ensure absolute positioning of the image works correctly */
-}
+    position: relative;*/ /* Ensure absolute positioning of the image works correctly */
+/*}
 
-.arrow-img[b-6svwu9dsdr] {
-    width: 60%; /* Adjust size as needed */
-    height: 60%;
+.arrow-img {
+    width: 60%;*/ /* Adjust size as needed */
+    /*height: 60%;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
+}*/
 
 /* Rotations for the image itself, not the arrow div */
-.up-img[b-6svwu9dsdr] {
-    transform: translate(-50%, -50%) rotate(90deg); /* Rotate 270deg for up */
-}
+/*.up-img {
+    transform: translate(-50%, -50%) rotate(90deg);*/ /* Rotate 270deg for up */
+/*}
 
-.left-img[b-6svwu9dsdr] {
-    transform: translate(-50%, -50%) rotate(0deg); /* Rotate 180deg for left */
-}
+.left-img {
+    transform: translate(-50%, -50%) rotate(0deg);*/ /* Rotate 180deg for left */
+/*}
 
-.down-img[b-6svwu9dsdr] {
-    transform: translate(-50%, -50%) rotate(270deg); /* Rotate 90deg for down */
-}
+.down-img {
+    transform: translate(-50%, -50%) rotate(270deg);*/ /* Rotate 90deg for down */
+/*}
 
-.right-img[b-6svwu9dsdr] {
+.right-img {
     transform: translate(-50%, -50%) rotate(180deg);
 }
 
-.gas-btn[b-6svwu9dsdr] {
+.gas-btn {
     position: relative;
-    background: linear-gradient(145deg, #333, #111); /* Black gradient */
-    border: none;
-    border-radius: 50px; /* Rounded corners */
-    color: white;
+    background: linear-gradient(145deg, #333, #111);*/ /* Black gradient */
+    /*border: none;
+    border-radius: 50px;*/ /* Rounded corners */
+    /*color: white;
     font-size: 24px;
     padding: 40px 60px;
     margin-top: 20px;
     margin-bottom: 20px;
     cursor: pointer;
-    box-shadow: 0 5px #000, 0 10px 20px rgba(0, 0, 0, 0.3); /* 3D effect */
-    transition: all 0.2s ease-in-out;
+    box-shadow: 0 5px #000, 0 10px 20px rgba(0, 0, 0, 0.3);*/ /* 3D effect */
+    /*transition: all 0.2s ease-in-out;
     font-family: 'Arial', sans-serif;
-    overflow: hidden; /* Ensure image is clipped to the button's shape */
-}
+    overflow: hidden;*/ /* Ensure image is clipped to the button's shape */
+/*}
 
-    .gas-btn[b-6svwu9dsdr]::before {
+    .gas-btn::before {
         content: '';
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         background: url('/images/gas.png') no-repeat center;
-        background-size: 60%; /* Adjust the size as needed */
-        width: 100%;
+        background-size: 60%;*/ /* Adjust the size as needed */
+        /*width: 100%;
         height: 100%;
-        pointer-events: none; /* Image won't block button clicks */
-    }
+        pointer-events: none;*/ /* Image won't block button clicks */
+    /*}
 
-    .gas-btn:hover[b-6svwu9dsdr] {
-        box-shadow: 0 3px #000, 0 8px 15px rgba(0, 0, 0, 0.3); /* Smaller shadow on hover */
-        transform: scale(1.05); /* Slightly enlarge */
-    }
+    .gas-btn:hover {
+        box-shadow: 0 3px #000, 0 8px 15px rgba(0, 0, 0, 0.3);*/ /* Smaller shadow on hover */
+        /*transform: scale(1.05);*/ /* Slightly enlarge */
+    /*}
 
-    .gas-btn:active[b-6svwu9dsdr] {
-        background: linear-gradient(145deg, #111, #333); /* Inverted gradient when pressed */
-        transform: translateY(5px); /* Move button down to simulate pressing */
-        box-shadow: 0 2px #000, 0 5px 10px rgba(0, 0, 0, 0.3); /* Reduced shadow */
-    }
+    .gas-btn:active {
+        background: linear-gradient(145deg, #111, #333);*/ /* Inverted gradient when pressed */
+        /*transform: translateY(5px);*/ /* Move button down to simulate pressing */
+        /*box-shadow: 0 2px #000, 0 5px 10px rgba(0, 0, 0, 0.3);*/ /* Reduced shadow */
+    /*}*/
 
 /* _content/TrailBlazorServerApp/Pages/MainPage.razor.rz.scp.css */
 .btn-select[b-3e5dp3zmwi] {
@@ -152,68 +152,5 @@ main[b-wmzh75e751] {
     .top-row[b-wmzh75e751], article[b-wmzh75e751] {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
-    }
-}
-/* _content/TrailBlazorServerApp/Shared/NavMenu.razor.rz.scp.css */
-.navbar-toggler[b-uj2luqnt3n] {
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.top-row[b-uj2luqnt3n] {
-    height: 3.5rem;
-    background-color: rgba(0,0,0,0.4);
-}
-
-.navbar-brand[b-uj2luqnt3n] {
-    font-size: 1.1rem;
-}
-
-.oi[b-uj2luqnt3n] {
-    width: 2rem;
-    font-size: 1.1rem;
-    vertical-align: text-top;
-    top: -2px;
-}
-
-.nav-item[b-uj2luqnt3n] {
-    font-size: 0.9rem;
-    padding-bottom: 0.5rem;
-}
-
-    .nav-item:first-of-type[b-uj2luqnt3n] {
-        padding-top: 1rem;
-    }
-
-    .nav-item:last-of-type[b-uj2luqnt3n] {
-        padding-bottom: 1rem;
-    }
-
-    .nav-item[b-uj2luqnt3n]  a {
-        color: #d7d7d7;
-        border-radius: 4px;
-        height: 3rem;
-        display: flex;
-        align-items: center;
-        line-height: 3rem;
-    }
-
-.nav-item[b-uj2luqnt3n]  a.active {
-    background-color: rgba(255,255,255,0.25);
-    color: white;
-}
-
-.nav-item[b-uj2luqnt3n]  a:hover {
-    background-color: rgba(255,255,255,0.1);
-    color: white;
-}
-
-@media (min-width: 641px) {
-    .navbar-toggler[b-uj2luqnt3n] {
-        display: none;
-    }
-
-    .collapse[b-uj2luqnt3n] {
-        /* Never collapse the sidebar for wide screens */
-        display: block;
     }
 }

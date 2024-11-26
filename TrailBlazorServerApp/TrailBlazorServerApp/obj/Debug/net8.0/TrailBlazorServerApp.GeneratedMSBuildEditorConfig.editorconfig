@@ -30,10 +30,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcVGVzdFVEUC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/Zechs/Documents/FHV/5. Semester/Microprocessors/TrailBlazor/TrailBlazorServerApp/TrailBlazorServerApp/Shared/SurveyPrompt.razor]
-build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFN1cnZleVByb21wdC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/Zechs/Documents/FHV/5. Semester/Microprocessors/TrailBlazor/TrailBlazorServerApp/TrailBlazorServerApp/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -49,10 +45,6 @@ build_metadata.AdditionalFiles.CssScope = b-3e5dp3zmwi
 [C:/Users/Zechs/Documents/FHV/5. Semester/Microprocessors/TrailBlazor/TrailBlazorServerApp/TrailBlazorServerApp/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = b-wmzh75e751
-
-[C:/Users/Zechs/Documents/FHV/5. Semester/Microprocessors/TrailBlazor/TrailBlazorServerApp/TrailBlazorServerApp/Shared/NavMenu.razor]
-build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE5hdk1lbnUucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = b-uj2luqnt3n
 
 [C:/Users/Zechs/Documents/FHV/5. Semester/Microprocessors/TrailBlazor/TrailBlazorServerApp/TrailBlazorServerApp/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s

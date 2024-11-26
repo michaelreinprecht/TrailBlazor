@@ -16,6 +16,7 @@ public class AppProtocolService
     };
 
     public event Action<string>? OnMessageReceived; // Event to notify when a message is received
+    public event Action<bool>? OnAckReceived;
 
     public AppProtocolService(UdpCommunicationService udpService)
     {
@@ -41,17 +42,17 @@ public class AppProtocolService
             Header receivedHeader = DeserializeStruct<Header>(data, 0);
             Console.WriteLine($"Received header: Version = {receivedHeader.VersionNumber}, Message Type = {receivedHeader.MessageType}, Flags = {receivedHeader.Flags}, SequenceNumber = {receivedHeader.SequenceNumber}");
 
-            if (IsSequenceNumberValid(receivedHeader.SequenceNumber))
-            {
-                LastReceivedSequenceNumber = receivedHeader.SequenceNumber;
+            //if (IsSequenceNumberValid(receivedHeader.SequenceNumber))
+            //{
+            //    LastReceivedSequenceNumber = receivedHeader.SequenceNumber;
 
                 // Handle message types here based on your application logic...
                 ProcessMessage(sender, receivedHeader, data);
-            }
-            else
-            {
-                Console.WriteLine($"Ignoring packet with sequence number {receivedHeader.SequenceNumber}");
-            }
+            //}
+            //else
+            //{
+            //    Console.WriteLine($"Ignoring packet with sequence number {receivedHeader.SequenceNumber}");
+            //}
         }
         else
         {
@@ -152,15 +153,14 @@ public class AppProtocolService
 
     }
 
-    public async Task SendProtocolMessage<T>(MessageType type, T payload, HashSet<Flag>? flags = null) where T : struct
+    public async Task SendProtocolMessage<T>(string targetIP, MessageType type, T payload, HashSet<Flag>? flags = null) where T : struct
     {
+        IPEndPoint targetDevice = new IPEndPoint(IPAddress.Parse(targetIP), 4444);
+
         Header header = CreateHeader(type, payload, flags);
         byte[] packetBytes = SerializePacket(header, payload);
 
-        foreach (var deviceEndpoint in _esp32Devices)
-        {
-            await _udpService.SendDataAsync(packetBytes, deviceEndpoint);
-        }
+        await _udpService.SendDataAsync(packetBytes, targetDevice);
     }
 
     public async Task SendProtocolMessage(MessageType type, HashSet<Flag>? flags = null)

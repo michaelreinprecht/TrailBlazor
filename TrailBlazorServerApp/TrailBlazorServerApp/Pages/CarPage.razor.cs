@@ -18,7 +18,7 @@ namespace TrailBlazorServerApp.Pages
         private string downArrowColor = "black";
         private string rightArrowColor = "black";
 
-        private System.Timers.Timer? udpSendTimer;
+        private Timer? udpSendTimer;
         private string statusMessage = "";
         private List<string> receivedMessages = new();
 
@@ -30,6 +30,9 @@ namespace TrailBlazorServerApp.Pages
 
         private bool isMobile = false;
         private bool isGasHeld = false;
+
+        private bool isConnecting = true;
+        private Timer? ackTimer;
 
         [Inject]
         private IJSRuntime? JSRuntime { get; set; }
@@ -79,6 +82,15 @@ namespace TrailBlazorServerApp.Pages
 
         private async void SendCommandToESP()
         {
+            string carIPAddress = "";
+            if (carID == 1)
+            {
+                carIPAddress = "192.168.4.100";
+            } else if (carID == 2)
+            {
+                carIPAddress = "192.168.4.101";
+            }
+
             int speed = 10; //Default to 10 for now
             char direction = GetDirection();
             bool stop = false; //Default to false for now
@@ -90,7 +102,7 @@ namespace TrailBlazorServerApp.Pages
 
             if (ProtocolService != null)
             {
-                await ProtocolService.SendProtocolMessage(MessageType.ControlCommand, controlCommand, new HashSet<Flag>() { Flag.ACK_Flag });
+                await ProtocolService.SendProtocolMessage(carIPAddress, MessageType.ControlCommand, controlCommand, new HashSet<Flag>() { Flag.ACK_Flag });
                 statusMessage = $"Sent Command: Direction = {direction}, Speed = {controlCommand.Speed}, Stop = {(stop ? "True" : "False")}";
                 StateHasChanged(); // Refresh the UI to reflect the latest status message
             }
@@ -100,6 +112,13 @@ namespace TrailBlazorServerApp.Pages
         {
             Console.WriteLine($"Received message: {message}"); // Log the message for debugging
             receivedMessages.Add(message);
+
+            if (message.Contains("ACK")) // Check if the message contains an ACK
+            {
+                isConnecting = false; // Hide the loading screen
+                ResetAckTimer(); // Restart the timer to watch for the next ACK
+            }
+
             InvokeAsync(StateHasChanged); // Update the UI
         }
 
@@ -177,6 +196,14 @@ namespace TrailBlazorServerApp.Pages
                 udpSendTimer = null; // Set to null to avoid further access
             }
 
+            if (ackTimer != null)
+            {
+                ackTimer.Stop();
+                ackTimer.Elapsed -= AckTimeout;
+                ackTimer.Dispose();
+                ackTimer = null;
+            }
+
             // Unsubscribe from UdpService events to prevent memory leaks
             if (ProtocolService != null)
             {
@@ -214,7 +241,30 @@ namespace TrailBlazorServerApp.Pages
             {
                 Console.WriteLine("ProtocolService is null! Make sure it's injected correctly.");
             }
+
+            StartAckTimer();
         }
+
+        private void StartAckTimer()
+        {
+            ackTimer = new Timer(5000); // 5 seconds
+            ackTimer.Elapsed += AckTimeout;
+            ackTimer.AutoReset = false; // Run only once unless restarted
+            ackTimer.Start();
+        }
+
+        private void ResetAckTimer()
+        {
+            ackTimer?.Stop();
+            ackTimer?.Start();
+        }
+
+        private void AckTimeout(object? sender, ElapsedEventArgs e)
+        {
+            isConnecting = true; // Show the loading screen again
+            InvokeAsync(StateHasChanged); // Update the UI
+        }
+
 
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -223,9 +273,11 @@ namespace TrailBlazorServerApp.Pages
             {
                 await AdaptToDeviceType();
 
-
-                // Set focus on the container div so it can capture key presses
-                await arrowContainer.FocusAsync();
+                if (!isConnecting)
+                {
+                    await arrowContainer.FocusAsync();
+                }
+               
 
                 bool success = false;
                 int retryCount = 0;
