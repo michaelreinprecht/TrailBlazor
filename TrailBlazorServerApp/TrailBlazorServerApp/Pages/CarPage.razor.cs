@@ -220,6 +220,7 @@ namespace TrailBlazorServerApp.Pages
 
         protected override async Task OnInitializedAsync()
         {
+            StartAckTimer();
             if (ProtocolService != null)
             {
                 ProtocolService.OnMessageReceived += HandleMessageReceived; // Subscribe to the event
@@ -231,7 +232,6 @@ namespace TrailBlazorServerApp.Pages
                 Console.WriteLine("ProtocolService is null! Make sure it's injected correctly.");
             }
 
-            StartAckTimer();
         }
 
         private void StartAckTimer()
@@ -248,11 +248,11 @@ namespace TrailBlazorServerApp.Pages
 
         private void ResetAckTimer()
         {
-            ackTimer.Elapsed -= AckTimeout;
-            ackTimer.Dispose();
-            StartAckTimer();
-            //ackTimer.Stop(); // Stop the timer
-            //ackTimer.Start(); // Restart the timer
+            //ackTimer.Elapsed -= AckTimeout;
+            //ackTimer.Dispose();
+            //StartAckTimer();
+            ackTimer.Stop(); // Stop the timer
+            ackTimer.Start(); // Restart the timer
         }
 
         private void AckTimeout(object? sender, ElapsedEventArgs e)
@@ -267,6 +267,11 @@ namespace TrailBlazorServerApp.Pages
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (ackTimer == null)
+            {
+                StartAckTimer();
+            }
+
             if (firstRender)
             {
                 await AdaptToDeviceType();
