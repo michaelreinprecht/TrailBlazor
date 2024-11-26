@@ -9,11 +9,6 @@ public class AppProtocolService
     private bool IsFirstPacket { get; set; } = true;
 
     private readonly UdpCommunicationService _udpService;
-    private readonly List<IPEndPoint> _esp32Devices = new()
-    {
-        new IPEndPoint(IPAddress.Parse("192.168.4.100"), 4444), // ESP32C3 #1
-        //new IPEndPoint(IPAddress.Parse("192.168.4.101"), 4444), // ESP32C3 #2
-    };
 
     public event Action<string>? OnMessageReceived; // Event to notify when a message is received
     public event Action<bool>? OnAckReceived;
@@ -88,7 +83,7 @@ public class AppProtocolService
         if (header.IsFlagSet(Flag.ACK_Flag) && header.MessageType != (byte)MessageType.ACK)
         {
             Console.WriteLine("ACK flag set, sending acknowledgment response");
-            await SendProtocolMessage(MessageType.ACK);
+            await SendProtocolMessage(sender.Address.ToString(), MessageType.ACK);
         }
 
         int headerSize = Marshal.SizeOf(typeof(Header));
@@ -163,15 +158,14 @@ public class AppProtocolService
         await _udpService.SendDataAsync(packetBytes, targetDevice);
     }
 
-    public async Task SendProtocolMessage(MessageType type, HashSet<Flag>? flags = null)
+    public async Task SendProtocolMessage(string targetIP, MessageType type, HashSet<Flag>? flags = null)
     {
+        IPEndPoint targetDevice = new IPEndPoint(IPAddress.Parse(targetIP), 4444);
+
         Header header = CreateHeader(type, flags);
         byte[] packetBytes = SerializePacket(header);
 
-        foreach (var deviceEndpoint in _esp32Devices)
-        {
-            await _udpService.SendDataAsync(packetBytes, deviceEndpoint);
-        }
+        await _udpService.SendDataAsync(packetBytes, targetDevice);
     }
 
     private Header CreateHeader<T>(MessageType type, T payload, HashSet<Flag>? flags = null) where T : struct

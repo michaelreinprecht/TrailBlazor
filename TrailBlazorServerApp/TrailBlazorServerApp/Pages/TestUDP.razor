@@ -77,7 +77,7 @@
         try
         {
             // Call the method to send an ACK message directly
-            await ProtocolService.SendProtocolMessage(MessageType.ACK);
+            await ProtocolService.SendProtocolMessage("192.168.4.100", MessageType.ACK);
             statusMessage = "ACK message sent successfully.";
         }
         catch (Exception ex)

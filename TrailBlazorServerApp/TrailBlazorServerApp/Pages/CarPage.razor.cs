@@ -117,6 +117,9 @@ namespace TrailBlazorServerApp.Pages
             {
                 isConnecting = false; // Hide the loading screen
                 ResetAckTimer(); // Restart the timer to watch for the next ACK
+            } else
+            {
+                Console.WriteLine($"Received no ack: {message}");
             }
 
             InvokeAsync(StateHasChanged); // Update the UI
