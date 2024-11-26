@@ -193,14 +193,6 @@ namespace TrailBlazorServerApp.Pages
                 udpSendTimer = null; // Set to null to avoid further access
             }
 
-            if (ackTimer != null)
-            {
-                ackTimer.Stop();
-                ackTimer.Elapsed -= AckTimeout;
-                ackTimer.Dispose();
-                ackTimer = null;
-            }
-
             // Unsubscribe from UdpService events to prevent memory leaks
             if (ProtocolService != null)
             {
@@ -244,6 +236,10 @@ namespace TrailBlazorServerApp.Pages
 
         private void StartAckTimer()
         {
+            if (ackTimer != null)
+            {
+                ackTimer.Dispose();
+            }
             ackTimer = new Timer(5000); // 5 seconds
             ackTimer.Elapsed += AckTimeout;
             ackTimer.AutoReset = false; // Run only once unless restarted
