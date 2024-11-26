@@ -248,8 +248,11 @@ namespace TrailBlazorServerApp.Pages
 
         private void ResetAckTimer()
         {
-            ackTimer?.Stop(); // Stop the timer
-            ackTimer?.Start(); // Restart the timer
+            ackTimer.Elapsed -= AckTimeout;
+            ackTimer.Dispose();
+            StartAckTimer();
+            //ackTimer.Stop(); // Stop the timer
+            //ackTimer.Start(); // Restart the timer
         }
 
         private void AckTimeout(object? sender, ElapsedEventArgs e)
