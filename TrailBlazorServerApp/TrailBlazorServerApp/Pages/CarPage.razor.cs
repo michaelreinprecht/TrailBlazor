@@ -111,16 +111,10 @@ namespace TrailBlazorServerApp.Pages
         private void HandleMessageReceived(string message)
         {
             Console.WriteLine($"Received message: {message}"); // Log the message for debugging
-            receivedMessages.Add(message);
+            receivedMessages.Add(message); // Add to the message list
 
-            if (message.Contains("ACK")) // Check if the message contains an ACK
-            {
-                isConnecting = false; // Hide the loading screen
-                ResetAckTimer(); // Restart the timer to watch for the next ACK
-            } else
-            {
-                Console.WriteLine($"Received no ack: {message}");
-            }
+            isConnecting = false; // Hide the loading screen since we received a message
+            ResetAckTimer(); // Restart the timer for the next 5-second window
 
             InvokeAsync(StateHasChanged); // Update the UI
         }
@@ -258,15 +252,17 @@ namespace TrailBlazorServerApp.Pages
 
         private void ResetAckTimer()
         {
-            ackTimer?.Stop();
-            ackTimer?.Start();
+            ackTimer?.Stop(); // Stop the timer
+            ackTimer?.Start(); // Restart the timer
         }
 
         private void AckTimeout(object? sender, ElapsedEventArgs e)
         {
-            isConnecting = true; // Show the loading screen again
+            isConnecting = true; // No messages received, show the loading screen
+            Console.WriteLine("No messages received for 5 seconds. Showing loading screen.");
             InvokeAsync(StateHasChanged); // Update the UI
         }
+
 
 
 
